@@ -109,6 +109,50 @@ CREATE TABLE LichSuKiemKe (
 );
 
 
+-- Index cho các table
+
+-- KhachHang
+CREATE INDEX IDX_KhachHang_SDT ON KhachHang(SDT);
+
+-- NhanVien
+CREATE INDEX IDX_NhanVien_ChucVu ON NhanVien(ChucVu);
+CREATE INDEX IDX_NhanVien_NgayVaoLam ON NhanVien(NgayVaoLam);
+
+-- NhaVanChuyen
+CREATE INDEX IDX_NhaVanChuyen_SDT_DaiDien ON NhaVanChuyen(SDT_DaiDien);
+
+-- VatTu
+CREATE INDEX IDX_VatTu_MaLVT ON VatTu(MaLVT);
+CREATE INDEX IDX_VatTu_TenVT ON VatTu(TenVT);
+CREATE INDEX IDX_VatTu_TrangThai ON VatTu(TrangThai);
+
+-- GiaoDich
+CREATE INDEX IDX_GiaoDich_MaNVC ON GiaoDich(MaNVC);
+CREATE INDEX IDX_GiaoDich_LoaiGD ON GiaoDich(LoaiGD);
+CREATE INDEX IDX_GiaoDich_ThoiGian ON GiaoDich(ThoiGian);
+
+-- LichSuCapNhat
+CREATE INDEX IDX_LichSuCapNhat_MaVT ON LichSuCapNhat(MaVT);
+CREATE INDEX IDX_LichSuCapNhat_NgayCapNhat ON LichSuCapNhat(NgayCapNhat);
+
+-- CT_Nhap
+CREATE INDEX IDX_CT_Nhap_MaGD ON CT_Nhap(MaGD);
+CREATE INDEX IDX_CT_Nhap_MaVT ON CT_Nhap(MaVT);
+CREATE INDEX IDX_CT_Nhap_MaNV ON CT_Nhap(MaNV);
+CREATE INDEX IDX_CT_Nhap_MaNCC ON CT_Nhap(MaNCC);
+
+-- CT_Xuat
+CREATE INDEX IDX_CT_Xuat_MaGD ON CT_Xuat(MaGD);
+CREATE INDEX IDX_CT_Xuat_MaVT ON CT_Xuat(MaVT);
+CREATE INDEX IDX_CT_Xuat_MaNV ON CT_Xuat(MaNV);
+CREATE INDEX IDX_CT_Xuat_MaKH ON CT_Xuat(MaKH);
+
+-- LichSuKiemKe
+CREATE INDEX IDX_LichSuKiemKe_MaNV ON LichSuKiemKe(MaNV);
+CREATE INDEX IDX_LichSuKiemKe_MaVT ON LichSuKiemKe(MaVT);
+CREATE INDEX IDX_LichSuKiemKe_ThoiGian ON LichSuKiemKe(ThoiGian);
+
+
 -- Xóa các bảng có phụ thuộc khóa ngoại trước
 --DROP TABLE CT_Xuat CASCADE CONSTRAINTS;
 --DROP TABLE CT_Nhap CASCADE CONSTRAINTS;
