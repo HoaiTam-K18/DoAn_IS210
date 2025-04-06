@@ -6,26 +6,63 @@ CREATE OR REPLACE TRIGGER TRG_UPDATE_INVENTORY_CT_Nhap
 AFTER INSERT OR UPDATE OR DELETE
 ON CT_Nhap
 FOR EACH ROW
+DECLARE v_current_quantity NUMBER;
 BEGIN
     -- Khi INSERT: Cộng số lượng vào kho
-    IF INSERTING THEN
-    UPDATE VatTu 
-    SET SoLuong = SoLuong + :NEW.SL
-    WHERE MaVT = :NEW.MaVT;
-    
-    -- Khi UPDATE: Trừ số lượng cũ, sau đó cộng số lượng mới
-    ELSIF UPDATING THEN
-    UPDATE VatTu 
-    SET SoLuong = SoLuong - :OLD.SL + :NEW.SL
-    WHERE MaVT = :NEW.MaVT;
-    
-    -- Khi DELETE: Trừ số lượng khỏi kho
+    IF INSERTING OR UPDATING THEN
+        BEGIN 
+            -- Khóa hàng trong VatTu
+            SELECT SoLuong 
+            INTO v_current_quantity 
+            FROM VatTu 
+            WHERE MaVT = :NEW.MaVT
+            FOR UPDATE;
+        END;
     ELSIF DELETING THEN
-    UPDATE VatTu 
-    SET SoLuong = SoLuong - :OLD.SL
-    WHERE MaVT = :OLD.MaVT;  
-    
+        BEGIN
+            -- Khóa hàng trong VatTu
+            SELECT SoLuong 
+            INTO v_current_quantity 
+            FROM VatTu 
+            WHERE MaVT = :OLD.MaVT
+            FOR UPDATE;
+        END;
     END IF;
+    
+    IF INSERTING THEN
+        BEGIN
+            -- Cập nhật số lượng
+            UPDATE VatTu
+            SET SoLuong = v_current_quantity + :NEW.SL
+            WHERE MaVT = :NEW.MaVT;
+        END;
+        
+        -- Khi UPDATE: Trừ số lượng cũ, sau đó cộng số lượng mới
+    ELSIF UPDATING THEN
+        BEGIN
+            -- Cập nhật số lượng
+            UPDATE VatTu
+            SET SoLuong = v_current_quantity + :NEW.SL - :OLD.SL
+            WHERE MaVT = :NEW.MaVT;
+            
+        END;
+        
+        -- Khi DELETE: Trừ số lượng khỏi kho
+    ELSIF DELETING THEN
+        BEGIN
+            -- Cập nhật số lượng
+            UPDATE VatTu
+            SET SoLuong = v_current_quantity - :OLD.SL
+            WHERE MaVT = :OLD.MaVT;
+        
+        END;  
+    END IF;
+    
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Không tìm thấy vật tư với MaVT tương ứng');
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Lỗi khi cập nhật số lượng vật tư: ' || SQLERRM);
 END;
 /
 
@@ -35,26 +72,58 @@ CREATE OR REPLACE TRIGGER TRG_UPDATE_INVENTORY
 AFTER INSERT OR UPDATE OR DELETE
 ON CT_Xuat
 FOR EACH ROW
+DECLARE v_current_quantity NUMBER;
 BEGIN
+    IF INSERTING OR UPDATING THEN
+        BEGIN
+            SELECT SoLuong 
+            INTO v_current_quantity
+            FROM VatTu
+            WHERE MaVT = :NEW.MaVT
+            FOR UPDATE;
+        END;
+    ELSIF DELETING THEN
+        BEGIN
+            SELECT SoLuong 
+            INTO v_current_quantity
+            FROM VatTu
+            WHERE MaVT = :OLD.MaVT
+            FOR UPDATE;
+        END;
+    END IF;
+
     -- Khi INSERT: Trừ số lượng khỏi kho
     IF INSERTING THEN
-    UPDATE VatTu 
-    SET SoLuong = SoLuong - :NEW.SL
-    WHERE MaVT = :NEW.MaVT;
+        BEGIN
+            UPDATE VatTu 
+            SET SoLuong = SoLuong - :NEW.SL
+            WHERE MaVT = :NEW.MaVT;
+        END;
     
     -- Khi UPDATE: Trừ số lượng mới, sau đó cộng số lượng cũ
     ELSIF UPDATING THEN
-    UPDATE VatTu 
-    SET SoLuong = SoLuong - :NEW.SL + :OLD.SL
-    WHERE MaVT = :NEW.MaVT;
+        BEGIN
+            UPDATE VatTu 
+            SET SoLuong = SoLuong - :NEW.SL + :OLD.SL
+            WHERE MaVT = :NEW.MaVT;
+        
+        END;
     
     -- Khi DELETE: Cộng số lượng vào kho 
     ELSIF DELETING THEN
-    UPDATE VatTu 
-    SET SoLuong = SoLuong + :OLD.SL
-    WHERE MaVT = :OLD.MaVT;  
-    
+        BEGIN
+            UPDATE VatTu 
+            SET SoLuong = SoLuong + :OLD.SL
+            WHERE MaVT = :OLD.MaVT;  
+
+        END;
     END IF;
+    
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Không tìm thấy vật tư với MaVT tương ứng');
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Lỗi khi cập nhật số lượng vật tư: ' || SQLERRM);
 END;
 /
 
@@ -65,40 +134,100 @@ BEFORE INSERT OR UPDATE
 ON VatTu    
 FOR EACH ROW
 BEGIN
-    -- Kiểm tra nếu đơn giá xuất chưa được nhập (NULL) thì tính theo công thức
-    IF :NEW.DonGiaXuat IS NULL OR :NEW.DonGiaXuat <> :NEW.DonGiaNhap * 1.2 THEN
-        :NEW.DonGiaXuat := :NEW.DonGiaNhap * 1.2;
+    -- Kiểm tra và cập nhật DonGiaXuat
+    IF :NEW.DonGiaNhap IS NOT NULL THEN
+        IF :NEW.DonGiaXuat IS NULL OR :NEW.DonGiaXuat <> :NEW.DonGiaNhap * 1.2 THEN
+            :NEW.DonGiaXuat := :NEW.DonGiaNhap * 1.2;
+        END IF;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20001, 'Đơn giá nhập không được NULL');
     END IF;
-    IF UPDATING THEN 
-    BEGIN
-        INSERT INTO LichSuCapNhat(MaVT, GiaCu, GiaMoi)
-        VALUES(:NEW.MaVT, :OLD.DonGiaNhap, :NEW.DonGiaNhap);
-    END;
+
+    -- Ghi lịch sử cập nhật khi thay đổi DonGiaNhap
+    IF UPDATING AND :OLD.DonGiaNhap != :NEW.DonGiaNhap THEN
+        INSERT INTO LichSuCapNhat (MaVT, GiaCu, GiaMoi)
+        VALUES (:NEW.MaVT, :OLD.DonGiaNhap, :NEW.DonGiaNhap);
     END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Lỗi trong trigger: ' || SQLERRM);
 END;
 /
 
 
 
 --***2. Trigger trên bảng GiaoDich
---Không cho phép giao dịch xuất khi số lượng vật tư trong kho không đủ.
-CREATE OR REPLACE TRIGGER trg_prevent_insufficient_stock
+--Không cho phép thêm hay sửa giao dịch xuất khi số lượng vật tư trong kho không đủ.
+--CT_Nhap
+CREATE OR REPLACE TRIGGER trg_prevent_insufficient_stock_CT_Nhap
+BEFORE DELETE OR UPDATE
+ON CT_Nhap
+FOR EACH ROW
+DECLARE
+    v_available_quantity NUMBER;
+BEGIN
+    -- Lấy số lượng hiện có trong kho của mặt hàng cần xuất 
+    IF UPDATING THEN
+        BEGIN
+            SELECT SoLuong 
+            INTO v_available_quantity
+            FROM VatTu
+            WHERE MaVT = :NEW.MaVT
+            FOR UPDATE;
+        END;
+    ELSIF DELETING THEN
+        BEGIN
+            SELECT SoLuong 
+            INTO v_available_quantity
+            FROM VatTu
+            WHERE MaVT = :OLD.MaVT
+            FOR UPDATE;
+        END;
+    END IF;
+    
+    IF UPDATING THEN
+        IF v_available_quantity + :NEW.SL - :OLD.SL < 0 THEN
+            RAISE_APPLICATION_ERROR(-20005, 'Số lượng vật tư trong kho không đủ để xuất!');
+        END IF;
+    ELSIF DELETING THEN
+        IF v_available_quantity - :OLD.SL < 0 THEN
+            RAISE_APPLICATION_ERROR(-20005, 'Số lượng vật tư trong kho không đủ để xuất!');
+        END IF;
+    END IF;
+    
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Không tìm thấy vật tư với MaVT tương ứng');
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Lỗi khi cập nhật số lượng vật tư: ' || SQLERRM);
+END;
+/
+
+-- CT_Xuat
+CREATE OR REPLACE TRIGGER trg_prevent_insufficient_stock_CT_Xuat 
 BEFORE INSERT OR UPDATE
 ON CT_Xuat
 FOR EACH ROW
 DECLARE
     v_available_quantity NUMBER;
 BEGIN
-    -- Lấy số lượng hiện có trong kho của mặt hàng cần xuất
+    -- Lấy số lượng hiện có trong kho của mặt hàng cần xuất 
     SELECT SoLuong 
     INTO v_available_quantity
     FROM VatTu
-    WHERE MaVT = :NEW.MaVT;
+    WHERE MaVT = :NEW.MaVT
+    FOR UPDATE;
     
-    -- Kiểm tra nếu giao dịch là xuất kho (giả sử Type = 'OUT')
-    IF :NEW.SL > v_available_quantity THEN
-        RAISE_APPLICATION_ERROR(-20001, 'Số lượng vật tư trong kho không đủ để xuất!');
+    IF :NEW.SL - NVL(:OLD.SL, 0) > v_available_quantity THEN
+        RAISE_APPLICATION_ERROR(-20005, 'Số lượng vật tư trong kho không đủ để xuất!');
     END IF;
+    
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Không tìm thấy vật tư với MaVT tương ứng');
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Lỗi khi cập nhật số lượng vật tư: ' || SQLERRM);
 END;
 /
 
@@ -115,36 +244,132 @@ END;
 /
 
 --Tự động tính tổng tiền giao dịch dựa trên chi tiết nhập/xuất.
-CREATE OR REPLACE TRIGGER trg_UpdateThanhTien_Nhap
-AFTER INSERT OR DELETE OR UPDATE 
-ON CT_Nhap
-BEGIN
-    -- Cập nhật lại tổng tiền cho từng giao dịch
-    MERGE INTO GiaoDich GD
-    USING (
-        SELECT MaGD, SUM(NVL(ThanhTien, 0)) AS TongTien
-        FROM CT_Nhap
-        GROUP BY MaGD
-    ) CT ON (GD.MaGD = CT.MaGD)
-    WHEN MATCHED THEN
-        UPDATE SET GD.ThanhTien = CT.TongTien;
-END;
+CREATE OR REPLACE TRIGGER trg_UpdateThanhTien_Xuat
+FOR INSERT OR UPDATE OR DELETE
+ON CT_Xuat
+COMPOUND TRIGGER
+
+    -- Tạo ra mảng lưu trữ giá trị thành tiền.
+    TYPE t_CT_Xuat_ThanhTien IS TABLE OF CT_Xuat.THANHTIEN%TYPE INDEX BY PLS_INTEGER;
+    TYPE t_CT_Xuat_MaGD IS TABLE OF CT_Xuat.MAGD%TYPE INDEX BY PLS_INTEGER;
+
+    v_CT_Xuat_ThanhTien t_CT_Xuat_ThanhTien;
+    v_CT_Xuat_MaGD t_CT_Xuat_MaGD;
+
+    AFTER EACH ROW IS
+    BEGIN
+        IF INSERTING OR UPDATING THEN
+        BEGIN
+            v_CT_Xuat_ThanhTien(v_CT_Xuat_ThanhTien.COUNT + 1) := :NEW.ThanhTien - NVL(:OLD.ThanhTien, 0);
+            v_CT_Xuat_MaGD(v_CT_Xuat_MaGD.COUNT + 1) := :NEW.MaGD;
+        END;
+        ELSIF DELETING THEN
+        BEGIN
+            v_CT_Xuat_ThanhTien(v_CT_Xuat_ThanhTien.COUNT + 1) := :OLD.ThanhTien;
+            v_CT_Xuat_MaGD(v_CT_Xuat_MaGD.COUNT + 1) := :OLD.MaGD;
+        END;
+        END IF;
+    END AFTER EACH ROW;
+
+    AFTER STATEMENT IS
+    BEGIN
+        FOR i IN 1 .. v_CT_Xuat_MaGD.COUNT  
+        LOOP
+            -- Tạo biến tạm.
+            DECLARE v_temp NUMBER;
+            BEGIN
+                -- Lock các row theo MaGD và MaVT
+                SELECT 1 INTO v_temp
+                FROM GIAODICH
+                WHERE MaGD = v_CT_Xuat_MaGD(i) 
+                FOR UPDATE;
+
+                -- Tính Thành Tiền vào Giao Dịch.
+                IF INSERTING OR UPDATING THEN
+                    UPDATE GIAODICH
+                    SET THANHTIEN = THANHTIEN + v_CT_Xuat_ThanhTien(i)
+                    WHERE MaGD = v_CT_Xuat_MaGD(i);
+                ELSIF DELETING THEN
+                    UPDATE GIAODICH
+                    SET THANHTIEN = THANHTIEN - v_CT_Xuat_ThanhTien(i)
+                    WHERE MAGD = v_CT_Xuat_MaGD(i);
+                END IF;
+
+                EXCEPTION 
+                    WHEN NO_DATA_FOUND THEN
+                        DBMS_OUTPUT.PUT_LINE('Không tìm thấy dữ liệu cho MaGD: ' || v_CT_Xuat_MaGD(i));
+                    WHEN TOO_MANY_ROWS THEN
+                        DBMS_OUTPUT.PUT_LINE('Nhiều dòng dữ liệu trùng MaGD: ' || v_CT_Xuat_MaGD(i));
+                    WHEN OTHERS THEN
+                        DBMS_OUTPUT.PUT_LINE('Lỗi khác xảy ra: ' || SQLERRM);
+            END;
+        END LOOP;
+    END AFTER STATEMENT;
+END trg_UpdateThanhTien_Xuat;
 /
 
-CREATE OR REPLACE TRIGGER trg_UpdateThanhTien_Xuat
-AFTER INSERT OR DELETE OR UPDATE 
-ON CT_Xuat
-BEGIN
-    -- Cập nhật lại tổng tiền cho từng giao dịch
-    MERGE INTO GiaoDich GD
-    USING (
-        SELECT MaGD, SUM(NVL(ThanhTien, 0)) AS TongTien
-        FROM CT_Xuat
-        GROUP BY MaGD
-    ) CT ON (GD.MaGD = CT.MaGD)
-    WHEN MATCHED THEN
-        UPDATE SET GD.ThanhTien = CT.TongTien;
-END;
+CREATE OR REPLACE TRIGGER trg_UpdateThanhTien_Nhap
+FOR INSERT OR UPDATE OR DELETE
+ON CT_Nhap
+COMPOUND TRIGGER
+
+    -- Tạo ra mảng lưu trữ giá trị thành tiền.
+    TYPE t_CT_Nhap_ThanhTien IS TABLE OF CT_Nhap.THANHTIEN%TYPE INDEX BY PLS_INTEGER;
+    TYPE t_CT_Nhap_MaGD IS TABLE OF CT_Nhap.MAGD%TYPE INDEX BY PLS_INTEGER;
+
+    v_CT_Nhap_ThanhTien t_CT_Nhap_ThanhTien;
+    v_CT_Nhap_MaGD t_CT_Nhap_MaGD;
+
+    AFTER EACH ROW IS
+    BEGIN
+        IF INSERTING OR UPDATING THEN
+        BEGIN
+            v_CT_Nhap_ThanhTien(v_CT_Nhap_ThanhTien.COUNT + 1) := :NEW.ThanhTien - NVL(:OLD.ThanhTien, 0);
+            v_CT_Nhap_MaGD(v_CT_Nhap_MaGD.COUNT + 1) := :NEW.MaGD;
+        END;
+        ELSIF DELETING THEN
+        BEGIN
+            v_CT_Nhap_ThanhTien(v_CT_Nhap_ThanhTien.COUNT + 1) := :OLD.ThanhTien;
+            v_CT_Nhap_MaGD(v_CT_Nhap_MaGD.COUNT + 1) := :OLD.MaGD;
+        END;
+        END IF;
+    END AFTER EACH ROW;
+
+    AFTER STATEMENT IS
+    BEGIN
+        FOR i IN 1 .. v_CT_Nhap_MaGD.COUNT  
+        LOOP
+            -- Tạo biến tạm.
+            DECLARE v_temp NUMBER;
+            BEGIN
+                -- Lock các row theo MaGD và MaVT
+                SELECT 1 INTO v_temp
+                FROM GIAODICH
+                WHERE MaGD = v_CT_Nhap_MaGD(i) 
+                FOR UPDATE;
+
+                -- Tính Thành Tiền vào Giao Dịch.
+                IF INSERTING OR UPDATING THEN
+                    UPDATE GIAODICH
+                    SET THANHTIEN = THANHTIEN + v_CT_Nhap_ThanhTien(i)
+                    WHERE MaGD = v_CT_Nhap_MaGD(i);
+                ELSIF DELETING THEN
+                    UPDATE GIAODICH
+                    SET THANHTIEN = THANHTIEN - v_CT_Nhap_ThanhTien(i)
+                    WHERE MAGD = v_CT_Nhap_MaGD(i);
+                END IF;
+
+                EXCEPTION 
+                    WHEN NO_DATA_FOUND THEN
+                        DBMS_OUTPUT.PUT_LINE('Không tìm thấy dữ liệu cho MaGD: ' || v_CT_Nhap_MaGD(i));
+                    WHEN TOO_MANY_ROWS THEN
+                        DBMS_OUTPUT.PUT_LINE('Nhiều dòng dữ liệu trùng MaGD: ' || v_CT_Nhap_MaGD(i));
+                    WHEN OTHERS THEN
+                        DBMS_OUTPUT.PUT_LINE('Lỗi khác xảy ra: ' || SQLERRM);
+            END;
+        END LOOP;
+    END AFTER STATEMENT;
+END trg_UpdateThanhTien_Nhap;
 /
 
 --***3. Trigger trên bảng CT_Nhap
@@ -156,7 +381,11 @@ FOR EACH ROW
 DECLARE 
     v_DonGiaNhap NUMBER;
 BEGIN
-    SELECT DonGiaNhap INTO v_DonGiaNhap FROM VatTu WHERE MaVT = :NEW.MaVT;
+    SELECT DonGiaNhap 
+    INTO v_DonGiaNhap 
+    FROM VatTu 
+    WHERE MaVT = :NEW.MaVT
+    FOR UPDATE;
 
     -- Tính ThanhTien trước khi dữ liệu được insert/update vào bảng CT_Nhap
     :NEW.ThanhTien := :NEW.SL * v_DonGiaNhap;
@@ -197,7 +426,8 @@ BEGIN
     SELECT DonGiaXuat
     INTO v_DonGiaXuat
     FROM VatTu
-    WHERE MaVT = :NEW.MaVT;
+    WHERE MaVT = :NEW.MaVT
+    FOR UPDATE;
 
     -- Gán giá trị ThanhTien trực tiếp
     :NEW.ThanhTien := :NEW.SL * v_DonGiaXuat;
@@ -269,3 +499,12 @@ BEGIN
 END;
 /
 
+SELECT l.session_id, l.locked_mode, s.serial#, s.username, s.status
+FROM dba_objects o
+JOIN v$locked_object l ON o.object_id = l.object_id
+JOIN v$session s ON s.sid = l.session_id;
+ALTER SYSTEM KILL SESSION '515,1289' IMMEDIATE;
+SELECT sid, serial#, username, status, osuser, machine, program 
+FROM v$session
+WHERE status = 'ACTIVE';
+commit;

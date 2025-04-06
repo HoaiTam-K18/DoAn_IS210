@@ -19,6 +19,7 @@ INSERT INTO LoaiVT (TenLVT) VALUES ('Dụng cụ y tế');
 INSERT INTO LoaiVT (TenLVT) VALUES ('Thực phẩm đông lạnh, đóng hộp');
 INSERT INTO LoaiVT (TenLVT) VALUES ('Hàng tiêu dùng');
 INSERT INTO LoaiVT (TenLVT) VALUES ('Văn phòng phẩm');
+COMMIT;
 
 -- Bảng VatTu
 INSERT INTO VatTu (TenVT, MaLVT, DonGiaNhap, DonGiaXuat, SoLuong, TrangThai) VALUES ('Xi măng PCB40 ALLYBUILD bao 50kg', 1, 90000, 99000, 1000, 2);
@@ -41,6 +42,7 @@ INSERT INTO VatTu (TenVT, MaLVT, DonGiaNhap, DonGiaXuat, SoLuong, TrangThai) VAL
 INSERT INTO VatTu (TenVT, MaLVT, DonGiaNhap, DonGiaXuat, SoLuong, TrangThai) VALUES ('Thùng carton FSC 40x30x30cm M90', 13, 9800, 10000, 30000, 2);
 INSERT INTO VatTu (TenVT, MaLVT, DonGiaNhap, DonGiaXuat, SoLuong, TrangThai) VALUES ('Quần áo bảo hộ lao động AV02 1 bộ', 14, 190000, 230000, 660, 2);
 INSERT INTO VatTu (TenVT, MaLVT, DonGiaNhap, DonGiaXuat, SoLuong, TrangThai) VALUES ('Áo Parka Chống Tia UV Bỏ Túi NANO Design 1 chiếc', 15, 784000, 800000, 310, 1);
+COMMIT;
 
 -- Bảng NhaCungCap
 INSERT INTO NhaCungCap(TenNCC) VALUES ('Công ty TNHH ALLYBUILD Minh Mẫn');
@@ -63,6 +65,7 @@ INSERT INTO NhaCungCap(TenNCC) VALUES ('Hạt giống HFSeeds');
 INSERT INTO NhaCungCap(TenNCC) VALUES ('Công ty TNHH Công Nghệ Bao Bì Giấy Tiến Phát');
 INSERT INTO NhaCungCap(TenNCC) VALUES ('Công ty TNHH Sản Xuất Thương Mại Và Xuất Nhập Khẩu An Việt');
 INSERT INTO NhaCungCap(TenNCC) VALUES ('Công ty TNHH UNIQLO Việt Nam');
+COMMIT;
 
 -- Bảng KhachHang
 INSERT INTO KhachHang(TenKH, SDT) VALUES ('Nguyễn Văn An', 0905123456);
@@ -85,6 +88,7 @@ INSERT INTO KhachHang(TenKH, SDT) VALUES ('Cao Văn Hiếu', 0962890123);
 INSERT INTO KhachHang(TenKH, SDT) VALUES ('Đỗ Thị Hồng', 0973901234);
 INSERT INTO KhachHang(TenKH, SDT) VALUES ('Trần Văn Sang', 0984012345);
 INSERT INTO KhachHang(TenKH, SDT) VALUES ('Lý Thị Trang', 0995123456);
+COMMIT;
 
 -- Bảng NhanVien
 INSERT INTO NhanVien(TenNV, NgayVaoLam, Luong, ChucVu) VALUES ('Huỳnh Nguyên Ðan', TO_DATE('2021-05-18', 'YYYY-MM-DD'), 9000000, 'KeToan');
@@ -107,7 +111,7 @@ INSERT INTO NhanVien(TenNV, NgayVaoLam, Luong, ChucVu) VALUES ('Đặng Đình N
 INSERT INTO NhanVien(TenNV, NgayVaoLam, Luong, ChucVu) VALUES ('Luong Đức Huân', TO_DATE('2022-11-22', 'YYYY-MM-DD'), 17600000, 'NghiemThu');
 INSERT INTO NhanVien(TenNV, NgayVaoLam, Luong, ChucVu) VALUES ('Lê Kiều Ý', TO_DATE('2019-10-23', 'YYYY-MM-DD'), 7500000, 'NhapXuat');
 INSERT INTO NhanVien(TenNV, NgayVaoLam, Luong, ChucVu) VALUES ('Phan Vĩnh Hùng', TO_DATE('2017-05-07', 'YYYY-MM-DD'), 7300000, 'NghiemThu');
-
+COMMIT;
 
 -- Bảng NhaVanChuyen
 INSERT INTO NhaVanChuyen(TenNVC, SDT_DaiDien) VALUES ('Công ty Vận tải Hoàng Long', '0905123456');
@@ -130,6 +134,7 @@ INSERT INTO NhaVanChuyen(TenNVC, SDT_DaiDien) VALUES ('Công ty vận tải Vi�
 INSERT INTO NhaVanChuyen(TenNVC, SDT_DaiDien) VALUES ('Dịch vụ vận tải Hưng Thịnh', '0973901234');
 INSERT INTO NhaVanChuyen(TenNVC, SDT_DaiDien) VALUES ('Nhà xe Hoàng Hà', '0984012345');
 INSERT INTO NhaVanChuyen(TenNVC, SDT_DaiDien) VALUES ('Giao hàng Công Nghệ', '0995123456');
+COMMIT;
 
 -- Bảng GiaoDich
 INSERT INTO GiaoDich (LoaiGD, ThoiGian, MaNVC) VALUES ('Nhap', TO_DATE('2017-02-27', 'YYYY-MM-DD'), 1);
@@ -152,7 +157,7 @@ INSERT INTO GiaoDich (LoaiGD, ThoiGian, MaNVC) VALUES ('Xuat', TO_DATE('2023-12-
 INSERT INTO GiaoDich (LoaiGD, ThoiGian, MaNVC) VALUES ('Nhap', TO_DATE('2024-02-15', 'YYYY-MM-DD'), 18);
 INSERT INTO GiaoDich (LoaiGD, ThoiGian, MaNVC) VALUES ('Nhap', TO_DATE('2024-07-17', 'YYYY-MM-DD'), 19);
 INSERT INTO GiaoDich (LoaiGD, ThoiGian, MaNVC) VALUES ('Xuat', TO_DATE('2024-12-30', 'YYYY-MM-DD'), 20);
-
+COMMIT;
 
 -- Bảng CT_Nhap
 INSERT INTO CT_Nhap (MaGD, MaVT, SL, MaNV, MaNCC) VALUES (1, 18, 893, 7, 18);
@@ -180,6 +185,7 @@ INSERT INTO CT_Nhap (MaGD, MaVT, SL, MaNV, MaNCC) VALUES (19, 9, 1390, 14, 9);
 INSERT INTO CT_Nhap (MaGD, MaVT, SL, MaNV, MaNCC) VALUES (19, 8, 311, 14, 8);
 INSERT INTO CT_Nhap (MaGD, MaVT, SL, MaNV, MaNCC) VALUES (19, 1, 335, 14, 1);
 INSERT INTO CT_Nhap (MaGD, MaVT, SL, MaNV, MaNCC) VALUES (19, 2, 127, 14, 2);
+COMMIT;
 
 -- Bảng CT_Xuat
 INSERT INTO CT_Xuat (MaGD, MaVT, SL, MaNV, MaKH) VALUES (2, 4, 351, 8, 14);
@@ -207,7 +213,7 @@ INSERT INTO CT_Xuat (MaGD, MaVT, SL, MaNV, MaKH) VALUES (17, 20, 720, 10, 17);
 INSERT INTO CT_Xuat (MaGD, MaVT, SL, MaNV, MaKH) VALUES (17, 15, 532, 10, 17);
 INSERT INTO CT_Xuat (MaGD, MaVT, SL, MaNV, MaKH) VALUES (20, 7, 486, 14, 8);
 INSERT INTO CT_Xuat (MaGD, MaVT, SL, MaNV, MaKH) VALUES (20, 18, 158, 14, 8);
-
+COMMIT;
 
 -- Bảng LichSuKiemKe
 INSERT INTO LichSuKiemKe(MaNV, ThoiGian, MaVT, TinhTrang) VALUES (10, TO_DATE('2017-02-27', 'YYYY-MM-DD'), 1, 'Tốt');
@@ -230,7 +236,7 @@ INSERT INTO LichSuKiemKe(MaNV, ThoiGian, MaVT, TinhTrang) VALUES (19, TO_DATE('2
 INSERT INTO LichSuKiemKe(MaNV, ThoiGian, MaVT, TinhTrang) VALUES (13, TO_DATE('2024-02-15', 'YYYY-MM-DD'), 19, 'Bình thường');
 INSERT INTO LichSuKiemKe(MaNV, ThoiGian, MaVT, TinhTrang) VALUES (2, TO_DATE('2024-07-17', 'YYYY-MM-DD'), 14, 'Cần thay thế');
 INSERT INTO LichSuKiemKe(MaNV, ThoiGian, MaVT, TinhTrang) VALUES (14, TO_DATE('2024-12-30', 'YYYY-MM-DD'), 17, 'Tốt');
-
+COMMIT;
 
 -- Check data cua table
 --select * from LoaiVT;
@@ -238,7 +244,7 @@ INSERT INTO LichSuKiemKe(MaNV, ThoiGian, MaVT, TinhTrang) VALUES (14, TO_DATE('2
 --select * from NhaCungCap;
 --select * from KhachHang;
 --select * from NhanVien;
---select * from VatTu;
+-- select * from VatTu;
 --select * from GiaoDich;
 --select * from LichSuKiemKe;
 --select * from LichSuCapNhat;

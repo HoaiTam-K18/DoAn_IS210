@@ -10,14 +10,27 @@ BEGIN
     INTO p_SoLuong
     FROM VatTu
     WHERE MaVT = p_MaVT;
-    
-    EXCEPTION
-        WHEN NO_DATA_FOUND THEN 
-             DBMS_OUTPUT.PUT_LINE('Không tìm thấy mặt hàng với ID: ' || p_MaVT);
-        WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN 
+        DBMS_OUTPUT.PUT_LINE('Không tìm thấy mặt hàng với ID: ' || p_MaVT);
+        p_SoLuong := 0;
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
+        p_SoLuong := -1;
+
 END CHECK_INVENTORY;
 /
+
+DECLARE
+    v_soluong NUMBER;
+BEGIN
+    CHECK_INVENTORY(1, v_soluong);
+    DBMS_OUTPUT.PUT_LINE('Số lượng tồn kho: ' || v_soluong);
+END;
+/
+
+select * from VatTu;
 
 --Cập nhật thông tin hàng hóa (giá, mô tả, số lượng).
 CREATE OR REPLACE PROCEDURE CAPNHAT_HANGHOA (
@@ -28,7 +41,7 @@ CREATE OR REPLACE PROCEDURE CAPNHAT_HANGHOA (
 )
 AS
 BEGIN
-    -- Cập nhật thông tin hàng hóa
+    -- Cập nhật thông tin hàng hóa (UPDATE tự động khoá hàng cập nhật.)
     UPDATE VATTU
     SET DonGiaNhap = p_DonGiaNhap,
         TenVT = p_TenVT,
@@ -64,10 +77,10 @@ END BAOCAO_TONKHO_LoaiVT;
 /
 
 
---BEGIN
+-- BEGIN
 --    BAOCAO_TONKHO_LoaiVT;
---END;
---/
+-- END;
+-- /
 
 -- Lấy ra giá trị số lượng tồn kho theo MaVT
 CREATE OR REPLACE PROCEDURE Get_SLTonKho(
