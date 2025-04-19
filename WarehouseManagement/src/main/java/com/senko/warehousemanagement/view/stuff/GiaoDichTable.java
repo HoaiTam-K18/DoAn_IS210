@@ -1,22 +1,23 @@
 
 package com.senko.warehousemanagement.view.stuff;
-import com.senko.warehousemanagement.controller.KhachHangController;
+
+import com.senko.warehousemanagement.controller.GiaoDichController;
+import com.senko.warehousemanagement.controller.NhanVienController;
 import java.awt.Color;
 import java.awt.Component;
-import javax.swing.*;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
-
-public class KhachHangTable extends JTable{
+public class GiaoDichTable extends JTable{
     private DefaultTableModel model;
-    private KhachHangController controller = new KhachHangController();
+    private GiaoDichController controller = new GiaoDichController();
     
-    Object[][] data = controller.getKhachHangFromModel();
+    Object[][] data = controller.getGiaoDichFromModel();
     
-    String[] columns = {"Mã khách hàng","Tên khách hàng","Số điện thoại"};
+    String[] columns = {"Mã giao dịch","Loại giao dịch","Thời gian","Thành tiền","Mã nhà vận chuyển"};
     
-    public KhachHangTable(){
+    public GiaoDichTable(){
         model = new DefaultTableModel(data, columns);
         this.setModel(model);
         setShowHorizontalLines(true);
@@ -26,9 +27,6 @@ public class KhachHangTable extends JTable{
             @Override
             public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
                 TableHeader header = new TableHeader((String)value);
-                if(column==6){
-                    header.setHorizontalAlignment(JLabel.CENTER);
-                }
                 return header;
             }
             
@@ -44,38 +42,34 @@ public class KhachHangTable extends JTable{
                 else {
                     com.setBackground(Color.white);
                 }
-                //VatTu vt = (VatTu) value;
-                if(column!=6){
-                    return com;
-                }
-                return new StatusLabel((int)value);
+                return com;
             }
             
         });
     }
     
     public void refresh(){
-        Object[][] data = controller.getKhachHangFromModel();
+        Object[][] data = controller.getGiaoDichFromModel();
         model = new DefaultTableModel(data,columns);
         setModel(model);
         repaint();
         revalidate();
     }
     
-    public void addItem(String tenKhachHang, String soDienThoai){
-        controller.themKhachHangVaoModel(tenKhachHang, soDienThoai);
+    public void addItem(String loaiGiaoDich,  String nhaVanChuyen){
+        controller.themGiaoDichVaoModel(loaiGiaoDich, nhaVanChuyen);
         refresh();
     }
     
     public void deleteItem(){
-        int maKhachHang = (Integer) model.getValueAt(getSelectedRow(), 0);
-        controller.xoaKhachHang(maKhachHang);
+        int maGiaoDich = (Integer) model.getValueAt(getSelectedRow(), 0);
+        controller.xoaGiaoDich(maGiaoDich);
         refresh();
     }
     
-    public void editItem(String tenKhachHang, String soDienThoai){
-        int maKhachHang = (Integer) model.getValueAt(getSelectedRow(), 0);
-        controller.capNhatKhachHangVaoModel(tenKhachHang, soDienThoai, maKhachHang);
+    public void editItem(String loaiGiaoDich,  String nhaVanChuyen){
+        int maGiaoDich= (Integer) model.getValueAt(getSelectedRow(), 0);
+        controller.capNhatGiaoDichVaoModel(loaiGiaoDich, nhaVanChuyen, maGiaoDich);
         refresh();
     }
     public Object[] getItemAt(int row){
@@ -87,7 +81,6 @@ public class KhachHangTable extends JTable{
         }
         return obj;
     }
-    
     public int getRow(){
         return getSelectedRow();
     }

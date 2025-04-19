@@ -80,7 +80,11 @@ public class VatTuTable extends JTable{
     }
     public Object[] getItemAt(int row){
         DefaultTableModel model = (DefaultTableModel) this.getModel();
-        Object[] obj = {model.getValueAt(row, 0),model.getValueAt(row, 1),model.getValueAt(row, 2),model.getValueAt(row, 3),model.getValueAt(row, 4)};
+        int columnCount = model.getColumnCount();
+        Object[] obj = new Object[columnCount];
+        for (int i = 0; i < columnCount; i++) {
+            obj[i] = model.getValueAt(row, i);
+        }
         return obj;
     }
     

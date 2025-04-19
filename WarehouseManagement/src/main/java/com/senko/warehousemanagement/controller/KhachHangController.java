@@ -42,7 +42,7 @@ public class KhachHangController {
         }
     
     }
-    public boolean xoaVatTu(int maKhachHang){
+    public boolean xoaKhachHang(int maKhachHang){
         try{
             model.deleteKhachHang(maKhachHang);
             return true;

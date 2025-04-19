@@ -35,7 +35,7 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
                         ThemVatTuDialog.this.dispose();
                     }
                     catch(NumberFormatException err){
-                        JOptionPane.showConfirmDialog(null,"Nhap lai di thang lol","Thông báo", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showConfirmDialog(null,"Nhập lại đi đại ca","Thông báo", JOptionPane.PLAIN_MESSAGE);
                     }
                 }
                 else{
@@ -48,7 +48,7 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
                         ThemVatTuDialog.this.dispose();
                     }
                     catch(NumberFormatException err){
-                        JOptionPane.showConfirmDialog(null,"Nhap lai di thang lol","Thông báo", JOptionPane.PLAIN_MESSAGE);
+                        JOptionPane.showConfirmDialog(null,"Nhập lại đi đại ca","Thông báo", JOptionPane.PLAIN_MESSAGE);
                     }
                 }
             }

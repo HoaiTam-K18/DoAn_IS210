@@ -49,7 +49,7 @@ public class KhachHangForm extends javax.swing.JPanel {
                     addDialog.repaint();
                     addDialog.revalidate();
                 }catch (ArrayIndexOutOfBoundsException aibe){
-                    JOptionPane.showConfirmDialog(null,"Chưa chọn vật tư","Thông báo", JOptionPane.PLAIN_MESSAGE);
+                    JOptionPane.showConfirmDialog(null,"Chưa chọn khách hàng","Thông báo", JOptionPane.PLAIN_MESSAGE);
                 }
             }
             
