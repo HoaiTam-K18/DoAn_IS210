@@ -10,13 +10,15 @@ public class GiaoDich {
     private LocalDate thoiGian;
     private long thanhTien;
     private String nhaVanChuyen;
+    private String nhanVien;
 
-    public GiaoDich(int maGiaoDich, String loaiGiaoDich, LocalDate thoiGian, long thanhTien, String nhaVanChuyen) {
+    public GiaoDich(int maGiaoDich, String loaiGiaoDich, LocalDate thoiGian, long thanhTien, String nhaVanChuyen, String nhanVien) {
         this.maGiaoDich = maGiaoDich;
         this.loaiGiaoDich = loaiGiaoDich;
         this.thoiGian = thoiGian;
         this.thanhTien = thanhTien;
         this.nhaVanChuyen = nhaVanChuyen;
+        this.nhanVien = nhanVien;
     }
 
     public int getMaGiaoDich() {
@@ -57,5 +59,13 @@ public class GiaoDich {
 
     public void setNhaVanChuyen(String nhaVanChuyen) {
         this.nhaVanChuyen = nhaVanChuyen;
+    }
+
+    public String getNhanVien() {
+        return nhanVien;
+    }
+
+    public void setNhanVien(String nhanVien) {
+        this.nhanVien = nhanVien;
     }
 }

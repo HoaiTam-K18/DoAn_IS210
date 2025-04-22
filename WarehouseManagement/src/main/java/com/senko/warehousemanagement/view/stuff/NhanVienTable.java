@@ -1,11 +1,8 @@
 
 package com.senko.warehousemanagement.view.stuff;
-
-import com.senko.warehousemanagement.controller.KhachHangController;
 import com.senko.warehousemanagement.controller.NhanVienController;
 import java.awt.Color;
 import java.awt.Component;
-import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;

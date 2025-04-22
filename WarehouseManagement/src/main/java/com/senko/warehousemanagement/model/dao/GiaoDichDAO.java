@@ -13,7 +13,8 @@ import java.util.ArrayList;
 public class GiaoDichDAO {
     public ArrayList<GiaoDich> getAllGiaoDich(){
         ArrayList<GiaoDich> dsGiaoDich = new ArrayList<>();
-        String query = "SELECT * FROM GIAODICH JOIN NHAVANCHUYEN ON GIAODICH.MaNVC = NHAVANCHUYEN.MaNVC";
+        String query = "SELECT * FROM GIAODICH JOIN NHAVANCHUYEN ON GIAODICH.MaNVC = NHAVANCHUYEN.MaNVC "
+                + "JOIN NHANVIEN ON GIAODICH.MaNV = NHANVIEN.MaNV";
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query)) {
             
@@ -24,7 +25,8 @@ public class GiaoDichDAO {
                     rs.getString("LoaiGD"),
                     rs.getDate("ThoiGian").toLocalDate(),
                     rs.getLong("ThanhTien"),
-                    rs.getString("TenNVC")
+                    rs.getString("TenNVC"),
+                    rs.getString("TenNV")
                 );
             
                 dsGiaoDich.add(current);
@@ -36,12 +38,13 @@ public class GiaoDichDAO {
         return dsGiaoDich;
     }
     
-    public void insertGiaoDich(String loaiGiaoDich, int maNhaVanChuyen){
-        String query = "INSERT INTO GIAODICH(LoaiGD, MaNVC) VALUES (?,?)";
+    public void insertGiaoDich(String loaiGiaoDich, int maNhaVanChuyen, int maNhanVien){
+        String query = "INSERT INTO GIAODICH(LoaiGD, MaNVC, MaNV) VALUES (?,?,?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, loaiGiaoDich);
             stmt.setInt(2, maNhaVanChuyen);
+            stmt.setInt(3, maNhanVien);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -60,14 +63,15 @@ public class GiaoDichDAO {
         
     }
     
-    public void updateGiaoDich(String loaiGiaoDich, int maNhaVanChuyen, int maGiaoDich){
-        String query = "UPDATE KHACHHANG SET LoaiGD = ?, MaNVC = ?"
+    public void updateGiaoDich(String loaiGiaoDich, int maNhaVanChuyen,int maNhanVien, int maGiaoDich){
+        String query = "UPDATE KHACHHANG SET LoaiGD = ?, MaNVC = ?, MaNV = ?"
                          + "WHERE MaGD = ?";
         try(Connection con = DatabaseConnection.getConnection();
             PreparedStatement stmt = con.prepareStatement(query)){
             stmt.setString(1, loaiGiaoDich);
             stmt.setInt(2, maNhaVanChuyen);
-            stmt.setInt(3, maGiaoDich);
+            stmt.setInt(3, maNhanVien);
+            stmt.setInt(4, maGiaoDich);
             stmt.executeUpdate();
         }catch (SQLException e) {
             e.printStackTrace();
