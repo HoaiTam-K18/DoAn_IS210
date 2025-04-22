@@ -81,6 +81,25 @@ public class VatTuDAO {
             e.printStackTrace();
         }
     }
-    
+    public int getMaVatTu(String vatTu) {
+        int maVatTu = 0;
+        String query = "SELECT MAVT FROM VATTU WHERE TENVT = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, vatTu);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                maVatTu = rs.getInt("MAVT");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return maVatTu;
+    }
 }
 

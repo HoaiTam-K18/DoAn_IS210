@@ -2,7 +2,6 @@
 package com.senko.warehousemanagement.view.stuff;
 
 import com.senko.warehousemanagement.controller.GiaoDichController;
-import com.senko.warehousemanagement.controller.NhanVienController;
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTable;
@@ -15,7 +14,7 @@ public class GiaoDichTable extends JTable{
     
     Object[][] data = controller.getGiaoDichFromModel();
     
-    String[] columns = {"Mã giao dịch","Loại giao dịch","Thời gian","Thành tiền","Mã nhà vận chuyển"};
+    String[] columns = {"Mã giao dịch","Loại giao dịch","Thời gian","Thành tiền","Nhà vận chuyển","Nhân viên"};
     
     public GiaoDichTable(){
         model = new DefaultTableModel(data, columns);
@@ -56,8 +55,8 @@ public class GiaoDichTable extends JTable{
         revalidate();
     }
     
-    public void addItem(String loaiGiaoDich,  String nhaVanChuyen){
-        controller.themGiaoDichVaoModel(loaiGiaoDich, nhaVanChuyen);
+    public void addItem(String loaiGiaoDich,  String nhaVanChuyen, String nhanVien){
+        controller.themGiaoDichVaoModel(loaiGiaoDich, nhaVanChuyen, nhanVien);
         refresh();
     }
     
@@ -67,9 +66,9 @@ public class GiaoDichTable extends JTable{
         refresh();
     }
     
-    public void editItem(String loaiGiaoDich,  String nhaVanChuyen){
+    public void editItem(String loaiGiaoDich,  String nhaVanChuyen, String nhanVien){
         int maGiaoDich= (Integer) model.getValueAt(getSelectedRow(), 0);
-        controller.capNhatGiaoDichVaoModel(loaiGiaoDich, nhaVanChuyen, maGiaoDich);
+        controller.capNhatGiaoDichVaoModel(loaiGiaoDich, nhaVanChuyen, nhanVien, maGiaoDich);
         refresh();
     }
     public Object[] getItemAt(int row){

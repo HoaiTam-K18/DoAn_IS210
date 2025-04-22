@@ -3,6 +3,7 @@ package com.senko.warehousemanagement.controller;
 
 import com.senko.warehousemanagement.model.dao.GiaoDichDAO;
 import com.senko.warehousemanagement.model.dao.NhaVanChuyenDAO;
+import com.senko.warehousemanagement.model.dao.NhanVienDAO;
 import com.senko.warehousemanagement.model.entities.GiaoDich;
 import java.sql.Date;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 public class GiaoDichController {
     private GiaoDichDAO model;
     private NhaVanChuyenDAO modelNVC;
+    private NhanVienDAO modelNV;
     
     public GiaoDichController(){
         model = new GiaoDichDAO();
@@ -19,7 +21,7 @@ public class GiaoDichController {
     public Object[][] getGiaoDichFromModel(){
         ArrayList<GiaoDich> giaoDichList = model.getAllGiaoDich();
         
-        int colNum = 5;
+        int colNum = 6;
         int rowNum = giaoDichList.size();
         Object[][] data = new Object[rowNum][colNum];
         
@@ -29,18 +31,19 @@ public class GiaoDichController {
             data[i][2] = giaoDichList.get(i).getThoiGian();
             data[i][3] = giaoDichList.get(i).getThanhTien();
             data[i][4] = giaoDichList.get(i).getNhaVanChuyen();
-            
+            data[i][5] = giaoDichList.get(i).getNhanVien();
         }
         return data;
     }
     
-    public boolean themGiaoDichVaoModel(String loaiGiaoDich,  String nhaVanChuyen){
-        if(loaiGiaoDich.trim().isEmpty()||nhaVanChuyen.trim().isEmpty()){
+    public boolean themGiaoDichVaoModel(String loaiGiaoDich,  String nhaVanChuyen, String nhanVien){
+        if(loaiGiaoDich.trim().isEmpty()||nhaVanChuyen.trim().isEmpty()||nhanVien.trim().isEmpty()){
             return false;
         }
         int maNhaVanChuyen = modelNVC.getNhaVanChuyen(nhaVanChuyen);
+        int maNhanVien = modelNV.getMaNhanVien(nhanVien);
         try{
-            model.insertGiaoDich(loaiGiaoDich, maNhaVanChuyen);
+            model.insertGiaoDich(loaiGiaoDich, maNhaVanChuyen,maNhanVien);
             return true;
         }
         catch(Exception e){
@@ -58,13 +61,14 @@ public class GiaoDichController {
             return false;
         }
     }
-    public boolean capNhatGiaoDichVaoModel(String loaiGiaoDich,  String nhaVanChuyen, int maGiaoDich){
+    public boolean capNhatGiaoDichVaoModel(String loaiGiaoDich,  String nhaVanChuyen, String nhanVien, int maGiaoDich){
         if(loaiGiaoDich.trim().isEmpty()||nhaVanChuyen.trim().isEmpty()){
             return false;
         }
         int maNhaVanChuyen = modelNVC.getNhaVanChuyen(nhaVanChuyen);
+        int maNhanVien = modelNV.getMaNhanVien(nhanVien);
         try{
-            model.updateGiaoDich(loaiGiaoDich, maNhaVanChuyen, maGiaoDich);
+            model.updateGiaoDich(loaiGiaoDich, maNhaVanChuyen, maNhanVien, maGiaoDich);
             return true;
         }
         catch(Exception e){

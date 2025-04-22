@@ -31,7 +31,7 @@ public class ThemGiaoDichDialog extends javax.swing.JDialog {
                 if(isEdit){
                     try{
                         table.editItem((String)jComboBox1.getSelectedItem(),
-                                nhaVanChuyenField.getText());
+                                nhaVanChuyenField.getText(), nhanVienField.getText());
                         table.repaint();
                         table.revalidate();
                         JOptionPane.showConfirmDialog(null,"Sửa thành công","Thông báo", JOptionPane.PLAIN_MESSAGE);
@@ -44,7 +44,7 @@ public class ThemGiaoDichDialog extends javax.swing.JDialog {
                 else{
                     try{
                         table.addItem((String)jComboBox1.getSelectedItem(),
-                                nhaVanChuyenField.getText());
+                                nhaVanChuyenField.getText(), nhanVienField.getText());
                         table.repaint();
                         table.revalidate();
                         JOptionPane.showConfirmDialog(null,"Thêm thành công","Thông báo", JOptionPane.PLAIN_MESSAGE);
@@ -72,6 +72,7 @@ public class ThemGiaoDichDialog extends javax.swing.JDialog {
         nhaVanChuyenField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jComboBox1 = new javax.swing.JComboBox<>();
+        nhanVienField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -82,6 +83,8 @@ public class ThemGiaoDichDialog extends javax.swing.JDialog {
         nhaVanChuyenField.setText("Nhà vận chuyển");
 
         jButton1.setText("OK");
+
+        nhanVienField.setText("Nhân viên");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -97,7 +100,8 @@ public class ThemGiaoDichDialog extends javax.swing.JDialog {
                         .addGap(20, 20, 20)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(nhaVanChuyenField, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(nhanVienField))))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -109,7 +113,9 @@ public class ThemGiaoDichDialog extends javax.swing.JDialog {
                 .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(nhaVanChuyenField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(nhanVienField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 33, Short.MAX_VALUE)
                 .addComponent(jButton1)
                 .addGap(17, 17, 17))
         );
@@ -137,5 +143,6 @@ public class ThemGiaoDichDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField nhaVanChuyenField;
+    private javax.swing.JTextField nhanVienField;
     // End of variables declaration//GEN-END:variables
 }

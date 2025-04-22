@@ -70,6 +70,11 @@ public class GiaoDichForm extends javax.swing.JPanel {
         jScrollPane1.setViewportView(giaoDichTable1);
 
         jButton1.setText("Chi tiết");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -95,6 +100,18 @@ public class GiaoDichForm extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        try{
+            ChiTietGiaoDichForm dialog = new ChiTietGiaoDichForm(null,true);
+            dialog.setTable(giaoDichTable1);
+            dialog.initDetails();
+            dialog.setVisible(true);
+        } catch(Exception e){
+            JOptionPane.showConfirmDialog(null,"Chưa chọn giao dịch","Thông báo", JOptionPane.PLAIN_MESSAGE);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

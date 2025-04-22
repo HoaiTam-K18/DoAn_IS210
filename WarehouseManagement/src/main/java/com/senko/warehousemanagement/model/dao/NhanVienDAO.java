@@ -77,4 +77,25 @@ public class NhanVienDAO {
             e.printStackTrace();
         }
     }
+    
+     public int getMaNhanVien(String nhanVien) {
+        int maNhanVien = 0;
+        String query = "SELECT MANV FROM NHANVIEN WHERE TENNV = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, nhanVien);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                maNhanVien = rs.getInt("MALVT");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return maNhanVien;
+    }
 }
