@@ -19,20 +19,26 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 
-public class ChiTietHoaDonTable extends JTable {
+public class ChiTietGiaoDichTable extends JTable {
     private DefaultTableModel model;
     private ChiTietNhapController controller = new ChiTietNhapController();
     private int maGiaoDich;
+    private String loaiGiaoDich;
     
     public void setMaGiaoDich(int maGiaoDich){
         this.maGiaoDich = maGiaoDich;
     }
     
+    public void setLoaiGiaoDich(String loaiGiaoDich){
+        this.loaiGiaoDich = loaiGiaoDich;
+    }
+    
     String[] columns = {"Vật tư","Số lượng","Thành tiền", "Nhà cung cấp"};
+    String[] columnsXuat = {"Vật tư","Số lượng","Thành tiền", "Khách hàng"};
     
     int editingRow = -1;
     
-    public ChiTietHoaDonTable(){
+    public ChiTietGiaoDichTable(){
         
         setShowHorizontalLines(true);
         setRowHeight(30);
@@ -77,9 +83,15 @@ public class ChiTietHoaDonTable extends JTable {
     }
     
     public void loadData(){
-        Object[][] data = controller.getChiTietFromModel(maGiaoDich);
+        Object[][] data;
+        if(loaiGiaoDich.equals("Nhap")){
+           data = controller.getChiTietNhapFromModel(maGiaoDich);
+        }
+        else{
+            data = controller.getChiTietXuatFromModel(maGiaoDich);
+        }
         Object[][] dataTable = extractTable(data);
-        model = new DefaultTableModel(dataTable, columns);
+        model = new DefaultTableModel(dataTable, (loaiGiaoDich.equals("Nhap"))? columns : columnsXuat);
         setModel(model);
         
         PopupMenu menu = new PopupMenu();
@@ -101,7 +113,10 @@ public class ChiTietHoaDonTable extends JTable {
             public void actionPerformed(ActionEvent e) {
                 try{
                     String vatTu = getValueAt(getSelectedRow(), 0).toString();
-                    controller.xoaChiTietNhap(maGiaoDich, vatTu);
+                    if(loaiGiaoDich.equals("Nhap"))
+                        controller.xoaChiTietNhap(maGiaoDich, vatTu);
+                    else
+                        controller.xoaChiTietXuat(maGiaoDich, vatTu);
                     refresh();
                 }catch(Exception ex){
                     JOptionPane.showConfirmDialog(null,"Chưa chọn chi tiết","Thông báo", JOptionPane.PLAIN_MESSAGE);
@@ -150,13 +165,19 @@ public class ChiTietHoaDonTable extends JTable {
                         String tenVatTu = (String)modelChuan.getValueAt(row, 0);
                         String soLuong = modelChuan.getValueAt(row, 1).toString();
                         String thanhTien = modelChuan.getValueAt(row, 2).toString();
-                        String nhaCungCap = (String) modelChuan.getValueAt(row, 3);
+                        String doiTuongGiaoDich = (String) modelChuan.getValueAt(row, 3);
                         if(row == editingRow){
-                            controller.themChiTietNhapVaoModel(tenVatTu, soLuong, thanhTien, nhaCungCap, maGiaoDich);
+                            if(loaiGiaoDich.equals("Nhap")) 
+                                controller.themChiTietNhapVaoModel(tenVatTu, soLuong, thanhTien, doiTuongGiaoDich, maGiaoDich);
+                            else
+                                controller.themChiTietXuatVaoModel(tenVatTu, soLuong, thanhTien, doiTuongGiaoDich, maGiaoDich);
                             editingRow = -1;
                         }
                         else{
-                            controller.capNhatChiTietNhapVaoModel(tenVatTu, soLuong, thanhTien, nhaCungCap, maGiaoDich);
+                            if(loaiGiaoDich.equals("Nhap"))
+                                controller.capNhatChiTietNhapVaoModel(tenVatTu, soLuong, thanhTien, doiTuongGiaoDich, maGiaoDich);
+                            else
+                                controller.capNhatChiTietXuatVaoModel(tenVatTu, soLuong, thanhTien, doiTuongGiaoDich, maGiaoDich);
                         }
                     }
                     
@@ -169,9 +190,15 @@ public class ChiTietHoaDonTable extends JTable {
     }
     
     public void refresh(){
-        Object[][] data = controller.getChiTietFromModel(maGiaoDich);
+        Object[][] data;
+        if(loaiGiaoDich.equals("Nhap")){
+           data = controller.getChiTietNhapFromModel(maGiaoDich);
+        }
+        else{
+            data = controller.getChiTietXuatFromModel(maGiaoDich);
+        }
         Object[][] dataTable = extractTable(data);
-        model = new DefaultTableModel(dataTable, columns);
+        model = new DefaultTableModel(dataTable, (loaiGiaoDich.equals("Nhap"))? columns : columnsXuat);
         setModel(model);
         repaint();
         revalidate();

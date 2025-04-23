@@ -106,7 +106,8 @@ public class GiaoDichForm extends javax.swing.JPanel {
         try{
             ChiTietGiaoDichForm dialog = new ChiTietGiaoDichForm(null,true);
             dialog.setTable(giaoDichTable1);
-            dialog.initDetails();
+            String loaiGiaoDich = giaoDichTable1.getValueAt(giaoDichTable1.getSelectedRow(), 1).toString();
+            dialog.initDetails(loaiGiaoDich);
             dialog.setVisible(true);
         } catch(Exception e){
             JOptionPane.showConfirmDialog(null,"Chưa chọn giao dịch","Thông báo", JOptionPane.PLAIN_MESSAGE);

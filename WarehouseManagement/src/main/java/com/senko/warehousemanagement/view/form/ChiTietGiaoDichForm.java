@@ -17,11 +17,12 @@ public class ChiTietGiaoDichForm extends javax.swing.JDialog {
         initComponents();
     }
     
-    public void initDetails(){
+    public void initDetails(String loaiGiaoDich){
         Object[] obj = table.getItemAt(table.getSelectedRow());
         maGiaoDichField.setText(String.valueOf(obj[0]));
         nhanVienField.setText((String)obj[5]);
         chiTietHoaDonTable1.setMaGiaoDich((int)obj[0]);
+        chiTietHoaDonTable1.setLoaiGiaoDich(loaiGiaoDich);
         chiTietHoaDonTable1.loadData();
         chiTietHoaDonTable1.repaint();
         chiTietHoaDonTable1.revalidate();
@@ -39,7 +40,7 @@ public class ChiTietGiaoDichForm extends javax.swing.JDialog {
         nhanVienField = new javax.swing.JTextField();
         tablePanel = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        chiTietHoaDonTable1 = new com.senko.warehousemanagement.view.stuff.ChiTietHoaDonTable();
+        chiTietHoaDonTable1 = new com.senko.warehousemanagement.view.stuff.ChiTietGiaoDichTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -163,7 +164,7 @@ public class ChiTietGiaoDichForm extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private com.senko.warehousemanagement.view.stuff.ChiTietHoaDonTable chiTietHoaDonTable1;
+    private com.senko.warehousemanagement.view.stuff.ChiTietGiaoDichTable chiTietHoaDonTable1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
