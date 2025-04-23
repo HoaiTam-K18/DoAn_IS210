@@ -72,4 +72,25 @@ public class KhachHangDAO {
             e.printStackTrace();
         }
     }
+    
+    public int getMaKhachHang(String khachHang) {
+        int maKhachHang = 0;
+        String query = "SELECT MAKH FROM KHACHHANG WHERE TENKH = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, khachHang);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                maKhachHang = rs.getInt("MAKH");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return maKhachHang;
+    }
 }
