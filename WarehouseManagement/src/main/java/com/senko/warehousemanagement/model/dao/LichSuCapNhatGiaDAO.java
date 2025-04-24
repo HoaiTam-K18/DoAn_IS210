@@ -2,6 +2,7 @@
 package com.senko.warehousemanagement.model.dao;
 
 import com.senko.warehousemanagement.model.DatabaseConnection;
+import com.senko.warehousemanagement.model.entities.LichSuCapNhatGia;
 import com.senko.warehousemanagement.model.entities.NhanVien;
 import java.sql.Connection;
 import java.sql.Date;
@@ -10,31 +11,32 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class NhanVienDAO {
-    public ArrayList<NhanVien> getAllNhanVien(){
-        ArrayList<NhanVien> dsNhanVien = new ArrayList<>();
-        String query = "SELECT * FROM NHANVIEN";
+
+public class LichSuCapNhatGiaDAO {
+    public ArrayList<LichSuCapNhatGia> getAllLichSuCapNhatGia(){
+        ArrayList<LichSuCapNhatGia> dsLichSuCapNhatGia = new ArrayList<>();
+        String query = "SELECT * FROM LICHSUCAPNHAT JOIN VATTU ON LICHSUCAPNHAT.MaVT = VATTU.MaVT";
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query)) {
             
             ResultSet rs = stmt.executeQuery();
             while(rs.next()){
                 
-                NhanVien current = new NhanVien(
-                    rs.getInt("MaNV"),
-                    rs.getString("TenNV"),
-                    rs.getDate("NgayVaoLam").toLocalDate(),
-                    rs.getLong("Luong"),
-                    rs.getString("ChucVu")
+                LichSuCapNhatGia current = new LichSuCapNhatGia(
+                    rs.getInt("MaLSCN"),
+                    rs.getString("TenVT"),
+                    rs.getLong("GiaCu"),
+                    rs.getLong("GiaMoi"),
+                    rs.getDate("NgayCapNhat").toLocalDate()
                 );
             
-                dsNhanVien.add(current);
+                dsLichSuCapNhatGia.add(current);
             }
             
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return dsNhanVien;
+        return dsLichSuCapNhatGia;
     }
     
     public void insertNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu){
@@ -89,7 +91,7 @@ public class NhanVienDAO {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                maNhanVien = rs.getInt("MANV");
+                maNhanVien = rs.getInt("MALVT");
             }
 
         } catch (SQLException e) {
