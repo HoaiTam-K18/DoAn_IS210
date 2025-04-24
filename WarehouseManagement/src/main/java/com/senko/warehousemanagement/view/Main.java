@@ -7,6 +7,8 @@ import com.senko.warehousemanagement.view.form.LichSuCapNhatForm;
 import com.senko.warehousemanagement.view.form.LichSuKiemKeForm;
 import com.senko.warehousemanagement.view.form.NhanVienForm;
 import com.senko.warehousemanagement.view.form.VatTuForm;
+import java.net.URL;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 
@@ -15,6 +17,8 @@ public class Main extends javax.swing.JFrame {
     
     public Main() {
         initComponents();
+        ImageIcon icon = new ImageIcon("/icon/appicon2.jpg");
+        setIconImage(icon.getImage());
         menu1.addEventMenuSelected(new EventMenuSelected(){
             @Override
             public void selected(int index) {
@@ -60,6 +64,7 @@ public class Main extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("WarehouseManager-1.0");
 
         panelBorder1.setBackground(new java.awt.Color(255, 255, 255));
         panelBorder1.setOpaque(false);
