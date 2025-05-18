@@ -32,6 +32,22 @@ END;
 
 select * from VatTu;
 
+-- Tìm kiếm vật tư theo MaVT hoặc tên VT
+CREATE OR REPLACE PROCEDURE Search_VATTU(
+    p_TenVT IN VARCHAR2
+)
+AS
+BEGIN
+    SELECT *
+    FROM VATTU
+    WHERE MaVT LIKE '%' || p_TenVT || '%'
+    OR TenVT LIKE '%' || p_TenVT || '%';
+
+    IF OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Không tồn tại vật tư đó trong kho: ' || SQLERRM);
+    END IF;
+END Search_VATTU;
+
 --Cập nhật thông tin hàng hóa (giá, mô tả, số lượng).
 CREATE OR REPLACE PROCEDURE CAPNHAT_HANGHOA (
     p_MaVT IN VARCHAR2,
@@ -156,31 +172,31 @@ END;
 
 
 -- Thêm CT_Nhap 
-CREATE OR REPLACE PROCEDURE Them_CT_Nhap(
-    P_MaGD IN NUMBER,
-    P_MaVT IN NUMBER,
-    P_SL IN NUMBER,
-    P_MaNV IN NUMBER,
-    P_MaNCC IN NUMBER
-)
-AS
-    dummy NUMBER;
-BEGIN
-    SELECT 1 INTO dummy
-    FROM VATTU
-    WHERE MAVT = P_MaVT
-    FOR UPDATE;
+-- CREATE OR REPLACE PROCEDURE Them_CT_Nhap(
+--     P_MaGD IN NUMBER,
+--     P_MaVT IN NUMBER,
+--     P_SL IN NUMBER,
+--     P_MaNV IN NUMBER,
+--     P_MaNCC IN NUMBER
+-- )
+-- AS
+--     dummy NUMBER;
+-- BEGIN
+--     SELECT 1 INTO dummy
+--     FROM VATTU
+--     WHERE MAVT = P_MaVT
+--     FOR UPDATE;
 
-    INSERT INTO CT_Nhap(MaGD, MaVT, SL, MaNV, ThanhTien, MaNCC) 
-    VALUES(P_MaGD, P_MaVT, P_SL, P_MaNV, 0, P_MaNCC);
-    COMMIT;
+--     INSERT INTO CT_Nhap(MaGD, MaVT, SL, MaNV, ThanhTien, MaNCC) 
+--     VALUES(P_MaGD, P_MaVT, P_SL, P_MaNV, 0, P_MaNCC);
+--     COMMIT;
 
-    EXCEPTION
-        WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
-            ROLLBACK;
-END Them_CT_Nhap;
-/
+--     EXCEPTION
+--         WHEN OTHERS THEN
+--             DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
+--             ROLLBACK;
+-- END Them_CT_Nhap;
+-- /
 
 -- DECLARE
 --     v_MaGD NUMBER;
@@ -209,31 +225,31 @@ END;
 
 
 -- Thêm CT_Xuat
-CREATE OR REPLACE PROCEDURE Them_CT_Xuat(
-    P_MaGD IN NUMBER,
-    P_MaVT IN NUMBER,
-    P_SL IN NUMBER,
-    P_MaNV IN NUMBER,
-    p_MaKH IN NUMBER
-)
-AS
-    dummy NUMBER;
-BEGIN
-    SELECT 1 INTO dummy
-    FROM VATTU
-    WHERE MAVT = P_MaVT
-    FOR UPDATE;
+-- CREATE OR REPLACE PROCEDURE Them_CT_Xuat(
+--     P_MaGD IN NUMBER,
+--     P_MaVT IN NUMBER,
+--     P_SL IN NUMBER,
+--     P_MaNV IN NUMBER,
+--     p_MaKH IN NUMBER
+-- )
+-- AS
+--     dummy NUMBER;
+-- BEGIN
+--     SELECT 1 INTO dummy
+--     FROM VATTU
+--     WHERE MAVT = P_MaVT
+--     FOR UPDATE;
 
-    INSERT INTO CT_Xuat(MaGD, MaVT, SL, MaNV, ThanhTien, MaKH) 
-    VALUES(P_MaGD, P_MaVT, P_SL, P_MaNV, 0, p_MaKH);
+--     INSERT INTO CT_Xuat(MaGD, MaVT, SL, MaNV, ThanhTien, MaKH) 
+--     VALUES(P_MaGD, P_MaVT, P_SL, P_MaNV, 0, p_MaKH);
    
-    COMMIT;
-    EXCEPTION
-        WHEN OTHERS THEN
-            DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
-            ROLLBACK;
-END Them_CT_Xuat;
-/
+--     COMMIT;
+--     EXCEPTION
+--         WHEN OTHERS THEN
+--             DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
+--             ROLLBACK;
+-- END Them_CT_Xuat;
+-- /
 
 
 --Truy vấn lịch sử nhập/xuất vật tư.
@@ -264,7 +280,6 @@ END LICH_SU_NHAP;
 -- Xoá Giao Dịch và các Chi tiết liên quan.
 CREATE OR REPLACE PROCEDURE XoaGiaoDich(
     P_MaGD IN NUMBER
-)
 AS
     v_LoaiGD GIAODICH.LOAIGD%TYPE;
 BEGIN
