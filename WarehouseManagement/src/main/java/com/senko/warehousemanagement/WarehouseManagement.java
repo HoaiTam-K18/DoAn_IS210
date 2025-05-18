@@ -4,6 +4,7 @@ package com.senko.warehousemanagement;
 
 import com.senko.warehousemanagement.view.Main;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.senko.warehousemanagement.view.FrameDangNhap;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
@@ -46,9 +47,9 @@ public class WarehouseManagement {
         SwingUtilities.invokeLater(() -> {
             try {
                 System.out.println("[DEBUG] Tạo đối tượng Main...");
-                Main main = new Main();
+                FrameDangNhap frame = new FrameDangNhap();
                 System.out.println("[DEBUG] Gọi setVisible(true)...");
-                main.setVisible(true);
+                frame.setVisible(true);
                 System.out.println("[DEBUG] Giao diện đã hiển thị.");
             } catch (Exception ex) {
                 System.err.println("[ERROR] Lỗi khi tạo giao diện: " + ex.getMessage());

@@ -24,6 +24,8 @@ CREATE TABLE NhanVien (
     NgayVaoLam DATE,
     Luong NUMBER,
     ChucVu VARCHAR2(50) NOT NULL,
+    TenDangNhap VARCHAR2(50) NOT NULL,
+    MatKhau VARCHAR2(50) NOT NULL,
     CONSTRAINT CK_ChucVu CHECK (ChucVu IN ('KeToan', 'NhapXuat', 'NghiemThu'))
 );
 
@@ -83,12 +85,12 @@ CREATE TABLE CT_Nhap (
 );
 
 -- Tạo bảng CT_Xuat
-CREATE TABLE CT_Xuat (
-    MaGD NUMBER NOT NULL,
-    MaVT NUMBER NOT NULL,
-    SL NUMBER NOT NULL,
-    ThanhTien NUMBER,
-    MaKH NUMBER NOT NULL,
+    CREATE TABLE CT_Xuat (
+        MaGD NUMBER NOT NULL,
+        MaVT NUMBER NOT NULL,
+        SL NUMBER NOT NULL,
+        ThanhTien NUMBER,
+        MaKH NUMBER NOT NULL,
     CONSTRAINT PK_CT_Xuat PRIMARY KEY (MaGD, MaVT),
     CONSTRAINT FK_CT_Xuat_GiaoDich FOREIGN KEY (MaGD) REFERENCES GiaoDich(MaGD),
     CONSTRAINT FK_CT_Xuat_VatTu FOREIGN KEY (MaVT) REFERENCES VatTu(MaVT),

@@ -4,6 +4,8 @@ package com.senko.warehousemanagement.view.form;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 
 public class KhachHangForm extends javax.swing.JPanel {
@@ -55,6 +57,24 @@ public class KhachHangForm extends javax.swing.JPanel {
             
                 
         });
+        
+        searchBar1.getSearchField().getDocument().addDocumentListener(new DocumentListener(){
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                khachHangTable1.filter(searchBar1.getSearchField().getText());
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                khachHangTable1.filter(searchBar1.getSearchField().getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                khachHangTable1.filter(searchBar1.getSearchField().getText());
+            }
+            
+        });
     }
 
     
@@ -65,6 +85,7 @@ public class KhachHangForm extends javax.swing.JPanel {
         functionBar1 = new com.senko.warehousemanagement.view.component.FunctionBar();
         jScrollPane1 = new javax.swing.JScrollPane();
         khachHangTable1 = new com.senko.warehousemanagement.view.stuff.KhachHangTable();
+        searchBar1 = new com.senko.warehousemanagement.view.component.SearchBar();
 
         jScrollPane1.setViewportView(khachHangTable1);
 
@@ -72,17 +93,18 @@ public class KhachHangForm extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(functionBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(functionBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addComponent(jScrollPane1)
+            .addComponent(searchBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(functionBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(searchBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
+                .addComponent(functionBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -91,5 +113,6 @@ public class KhachHangForm extends javax.swing.JPanel {
     private com.senko.warehousemanagement.view.component.FunctionBar functionBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private com.senko.warehousemanagement.view.stuff.KhachHangTable khachHangTable1;
+    private com.senko.warehousemanagement.view.component.SearchBar searchBar1;
     // End of variables declaration//GEN-END:variables
 }

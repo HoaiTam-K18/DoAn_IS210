@@ -4,6 +4,8 @@ package com.senko.warehousemanagement.view.form;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 
 public class VatTuForm extends javax.swing.JPanel {
@@ -51,9 +53,33 @@ public class VatTuForm extends javax.swing.JPanel {
                 }catch (ArrayIndexOutOfBoundsException aibe){
                     JOptionPane.showConfirmDialog(null,"Chưa chọn vật tư","Thông báo", JOptionPane.PLAIN_MESSAGE);
                 }
+            } 
+                
+        });
+        searchBar1.getSearchButton().addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchBar1.getSearchField().setText("");
             }
             
-                
+        });
+        
+        searchBar1.getSearchField().getDocument().addDocumentListener(new DocumentListener(){
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                vatTuTable1.filter(searchBar1.getSearchField().getText());
+            }
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                vatTuTable1.filter(searchBar1.getSearchField().getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                vatTuTable1.filter(searchBar1.getSearchField().getText());
+            }
+            
         });
     }
 
@@ -65,6 +91,7 @@ public class VatTuForm extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         vatTuTable1 = new com.senko.warehousemanagement.view.stuff.VatTuTable();
         functionBar1 = new com.senko.warehousemanagement.view.component.FunctionBar();
+        searchBar1 = new com.senko.warehousemanagement.view.component.SearchBar();
 
         jScrollPane1.setViewportView(vatTuTable1);
 
@@ -72,17 +99,18 @@ public class VatTuForm extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(functionBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
+            .addComponent(searchBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jScrollPane1)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(functionBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(functionBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(searchBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE))
+                .addComponent(functionBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -90,6 +118,7 @@ public class VatTuForm extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private com.senko.warehousemanagement.view.component.FunctionBar functionBar1;
     private javax.swing.JScrollPane jScrollPane1;
+    private com.senko.warehousemanagement.view.component.SearchBar searchBar1;
     private com.senko.warehousemanagement.view.stuff.VatTuTable vatTuTable1;
     // End of variables declaration//GEN-END:variables
 }

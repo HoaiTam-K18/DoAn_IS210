@@ -7,6 +7,8 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import javax.swing.JLabel;
+import javax.swing.JList;
 
 
 public class Menu extends javax.swing.JPanel {
@@ -17,6 +19,10 @@ public class Menu extends javax.swing.JPanel {
     public void addEventMenuSelected(EventMenuSelected event){
         this.event = event;
         listMenu1.addEventMenuSelected(event);
+    }
+    
+    public JLabel getWelcomeLabel(){
+        return welcomeLabel;
     }
     
     public Menu() {
@@ -49,7 +55,7 @@ public class Menu extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        welcomeLabel = new javax.swing.JLabel();
         listMenu1 = new com.senko.warehousemanagement.view.stuff.ListMenu<>();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -74,18 +80,19 @@ public class Menu extends javax.swing.JPanel {
 
         jPanel2.setOpaque(false);
 
-        jLabel2.setText("Xin Chào ...");
-        jLabel2.setIconTextGap(0);
+        welcomeLabel.setFont(new java.awt.Font("Montserrat SemiBold", 0, 14)); // NOI18N
+        welcomeLabel.setText("Xin Chào ...");
+        welcomeLabel.setIconTextGap(0);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(welcomeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
+            .addComponent(welcomeLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -110,9 +117,9 @@ public class Menu extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private com.senko.warehousemanagement.view.stuff.ListMenu<String> listMenu1;
+    private javax.swing.JLabel welcomeLabel;
     // End of variables declaration//GEN-END:variables
 }

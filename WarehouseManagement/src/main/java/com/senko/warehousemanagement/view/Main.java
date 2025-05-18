@@ -1,5 +1,6 @@
 
 package com.senko.warehousemanagement.view;
+import com.senko.warehousemanagement.model.entities.NhanVien;
 import com.senko.warehousemanagement.view.event.EventMenuSelected;
 import com.senko.warehousemanagement.view.form.GiaoDichForm;
 import com.senko.warehousemanagement.view.form.KhachHangForm;
@@ -10,36 +11,51 @@ import com.senko.warehousemanagement.view.form.VatTuForm;
 import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 
 
 public class Main extends javax.swing.JFrame {
 
     
-    public Main() {
+    public Main(NhanVien currentUser) {
         initComponents();
         ImageIcon icon = new ImageIcon("/icon/appicon2.jpg");
         setIconImage(icon.getImage());
+        menu1.getWelcomeLabel().setText("Xin chào, " + currentUser.getTenNhanVien() + "!");
+        String chucVu = currentUser.getChucVu();
         menu1.addEventMenuSelected(new EventMenuSelected(){
             @Override
             public void selected(int index) {
                 if(index == 0){
-                    System.out.println("cccc");
+                   if(chucVu.equals("NhapXuat") || chucVu.equals("NghiemThu"))
                     addForm(new VatTuForm());
+                   else {
+                        JOptionPane.showConfirmDialog(null,"Bạn có quyền sao??","Thông báo", JOptionPane.PLAIN_MESSAGE);
+                   }
                 }
                 else if(index==1){
+                    if(chucVu.equals("NhapXuat"))
                      addForm(new KhachHangForm());
+                    else 
+                        JOptionPane.showConfirmDialog(null,"Bạn có quyền sao??","Thông báo", JOptionPane.PLAIN_MESSAGE);
                 }
                 else if(index==2){
                      addForm(new NhanVienForm());
                 }
                 else if(index==3){
+                    if(chucVu.equals("KeToan"))
                      addForm(new GiaoDichForm());
+                    else 
+                        JOptionPane.showConfirmDialog(null,"Bạn có quyền sao??","Thông báo", JOptionPane.PLAIN_MESSAGE);
                 }
                 else if(index==4){
                      addForm(new LichSuCapNhatForm());
                 }
                 else if (index==5){
+                    if(chucVu.equals("NghiemThu"))
                      addForm(new LichSuKiemKeForm());
+                    else 
+                        JOptionPane.showConfirmDialog(null,"Bạn có quyền sao??","Thông báo", JOptionPane.PLAIN_MESSAGE);
                 }
             }   
         });
@@ -102,14 +118,6 @@ public class Main extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     
-    public static void main(String args[]) {
-        
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Main().setVisible(true);
-            }
-        });
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel mainPanel;
