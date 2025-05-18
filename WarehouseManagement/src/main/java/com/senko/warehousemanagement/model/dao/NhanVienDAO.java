@@ -25,7 +25,9 @@ public class NhanVienDAO {
                     rs.getString("TenNV"),
                     rs.getDate("NgayVaoLam").toLocalDate(),
                     rs.getLong("Luong"),
-                    rs.getString("ChucVu")
+                    rs.getString("ChucVu"),
+                    rs.getString("Username"),
+                    rs.getString("Password")
                 );
             
                 dsNhanVien.add(current);
@@ -97,5 +99,33 @@ public class NhanVienDAO {
         }
 
         return maNhanVien;
+    }
+     
+    public NhanVien getNhanVienByUsername(String username){
+        NhanVien nhanVien = null;
+        String query = "SELECT * FROM NHANVIEN WHERE USERNAME = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setString(1, username);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                nhanVien = new NhanVien(
+                   rs.getInt("MaNV"),
+                    rs.getString("TenNV"),
+                    rs.getDate("NgayVaoLam").toLocalDate(),
+                    rs.getLong("Luong"),
+                    rs.getString("ChucVu"),
+                    rs.getString("Username"),
+                    rs.getString("Password")
+                );
+            }
+            return nhanVien;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return nhanVien;
+        }
     }
 }

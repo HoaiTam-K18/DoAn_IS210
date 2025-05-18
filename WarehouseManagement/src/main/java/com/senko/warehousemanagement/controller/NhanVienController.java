@@ -39,7 +39,7 @@ public class NhanVienController {
         try{
             model.insertNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu);
             return true;
-        }
+        }   
         catch(Exception e){
             e.printStackTrace();
             return false;
@@ -69,5 +69,13 @@ public class NhanVienController {
             return false;
         }
     
+    }
+    
+    public NhanVien kiemTraDangNhap(String username, char[] password){
+        NhanVien nhanVien = model.getNhanVienByUsername(username);
+        if(nhanVien != null && new String(password).equals(nhanVien.getMatKhau())){
+            return nhanVien;
+        }
+        return null;
     }
 }

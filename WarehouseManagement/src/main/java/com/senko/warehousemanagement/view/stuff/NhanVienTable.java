@@ -3,14 +3,19 @@ package com.senko.warehousemanagement.view.stuff;
 import com.senko.warehousemanagement.controller.NhanVienController;
 import java.awt.Color;
 import java.awt.Component;
+import java.util.Arrays;
 import javax.swing.JTable;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 
 
 public class NhanVienTable extends JTable{
     private DefaultTableModel model;
     private NhanVienController controller = new NhanVienController();
+    private TableRowSorter<TableModel> rowSorter;
     
     Object[][] data = controller.getNhanVienFromModel();
     
@@ -19,6 +24,8 @@ public class NhanVienTable extends JTable{
     public NhanVienTable(){
         model = new DefaultTableModel(data, columns);
         this.setModel(model);
+        rowSorter = new TableRowSorter<>(this.getModel());
+        setRowSorter(rowSorter);
         setShowHorizontalLines(true);
         setRowHeight(30);
         getTableHeader().setReorderingAllowed(false);
@@ -83,5 +90,18 @@ public class NhanVienTable extends JTable{
     
     public int getRow(){
         return getSelectedRow();
+    }
+    
+    public void filter(String text){
+        RowFilter<TableModel, Object> filter = RowFilter.orFilter(Arrays.asList(
+        RowFilter.regexFilter("(?i)" + text, 0), // Cột 1 (Tên)
+        RowFilter.regexFilter("(?i)" + text, 1)  // Cột 2 (Địa chỉ)
+        ));
+        if (text.trim().length() == 0) {
+            rowSorter.setRowFilter(null); // Hiện lại tất cả
+        } else {
+            // (?i) = không phân biệt hoa thường
+            rowSorter.setRowFilter(filter); // Lọc theo cột thứ 1
+        }
     }
 }
