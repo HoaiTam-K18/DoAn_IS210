@@ -101,5 +101,26 @@ public class VatTuDAO {
 
         return maVatTu;
     }
+
+    public int getSoLuongTheoTrangThai(int trangThai) {
+        int soLuong = 0;
+        String query = "SELECT COUNT(*) FROM VATTU WHERE TrangThai = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, trangThai);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                soLuong = rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return soLuong;
+    }
 }
 

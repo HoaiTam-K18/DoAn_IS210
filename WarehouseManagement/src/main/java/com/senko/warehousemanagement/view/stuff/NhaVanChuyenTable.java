@@ -1,27 +1,26 @@
 
 package com.senko.warehousemanagement.view.stuff;
-import com.senko.warehousemanagement.controller.NhanVienController;
+
+import com.senko.warehousemanagement.controller.NhaVanChuyenController;
 import java.awt.Color;
 import java.awt.Component;
-import java.util.Arrays;
 import javax.swing.JTable;
-import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 
-public class NhanVienTable extends JTable{
+public class NhaVanChuyenTable extends JTable {
     private DefaultTableModel model;
-    private NhanVienController controller = new NhanVienController();
+    private NhaVanChuyenController controller = new NhaVanChuyenController();
     private TableRowSorter<TableModel> rowSorter;
     
-    Object[][] data = controller.getNhanVienFromModel();
+    Object[][] data = controller.getNhaVanChuyenFromModel();
     
-    String[] columns = {"Mã nhân viên","Tên nhân viên","Ngày vào làm","Lương","Chức vụ","Email"};
+    String[] columns = {"Mã nhà vận chuyển","Tên nhà vận chuyển","Số điện thoại đại diện"};
     
-    public NhanVienTable(){
+    public NhaVanChuyenTable(){
         model = new DefaultTableModel(data, columns);
         this.setModel(model);
         rowSorter = new TableRowSorter<>(this.getModel());
@@ -55,29 +54,24 @@ public class NhanVienTable extends JTable{
     }
     
     public void refresh(){
-        Object[][] data = controller.getNhanVienFromModel();
+        Object[][] data = controller.getNhaVanChuyenFromModel();
         model = new DefaultTableModel(data,columns);
         setModel(model);
         repaint();
         revalidate();
     }
     
-    public void addItem(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email){
-        controller.themNhanVienVaoModel(tenNhanVien, ngayVaoLam, luong, chucVu, email);
+    public void addItem(String tenNhaVanChuyen, String soDienThoai){
+        controller.themNhaVanChuyenVaoModel(tenNhaVanChuyen, soDienThoai);
         refresh();
     }
     
     public void deleteItem(){
-        int maNhanVien = (Integer) model.getValueAt(getSelectedRow(), 0);
-        controller.xoaNhanVien(maNhanVien);
+        int maNhaVanChuyen = (Integer) model.getValueAt(getSelectedRow(), 0);
+        controller.xoaNhaVanChuyen(maNhaVanChuyen);
         refresh();
     }
     
-    public void editItem(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email){
-        int maNhanVien = (Integer) model.getValueAt(getSelectedRow(), 0);
-        controller.capNhatNhanVienVaoModel(tenNhanVien, ngayVaoLam, luong, chucVu, email, maNhanVien);
-        refresh();
-    }
     public Object[] getItemAt(int row){
         DefaultTableModel model = (DefaultTableModel) this.getModel();
         int columnCount = model.getColumnCount();
@@ -90,18 +84,5 @@ public class NhanVienTable extends JTable{
     
     public int getRow(){
         return getSelectedRow();
-    }
-    
-    public void filter(String text){
-        RowFilter<TableModel, Object> filter = RowFilter.orFilter(Arrays.asList(
-        RowFilter.regexFilter("(?i)" + text, 0), // Cột 1 (Tên)
-        RowFilter.regexFilter("(?i)" + text, 1)  // Cột 2 (Địa chỉ)
-        ));
-        if (text.trim().length() == 0) {
-            rowSorter.setRowFilter(null); // Hiện lại tất cả
-        } else {
-            // (?i) = không phân biệt hoa thường
-            rowSorter.setRowFilter(filter); // Lọc theo cột thứ 1
-        }
     }
 }

@@ -13,8 +13,10 @@ public class NhanVien {
     private String chucVu;
     private String tenDangNhap;
     private String matKhau;
+    private String email;
 
-    public NhanVien(int maNhanVien, String tenNhanVien, LocalDate ngayVaoLam, long luong, String chucVu, String tenDangNhap, String matKhau) {
+
+    public NhanVien(int maNhanVien, String tenNhanVien, LocalDate ngayVaoLam, long luong, String chucVu, String tenDangNhap, String matKhau, String email) {
         this.maNhanVien = maNhanVien;
         this.tenNhanVien = tenNhanVien;
         this.ngayVaoLam = ngayVaoLam;
@@ -22,6 +24,7 @@ public class NhanVien {
         this.chucVu = chucVu;
         this.tenDangNhap = tenDangNhap;
         this.matKhau = matKhau;
+        this.email = email;
     }
 
     public int getMaNhanVien() {
@@ -78,5 +81,13 @@ public class NhanVien {
     
     public void setMatKhau(String matKhau){
         this.matKhau = matKhau;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }
