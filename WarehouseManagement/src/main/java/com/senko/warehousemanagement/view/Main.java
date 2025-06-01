@@ -7,6 +7,7 @@ import com.senko.warehousemanagement.view.form.KhachHangForm;
 import com.senko.warehousemanagement.view.form.LichSuCapNhatForm;
 import com.senko.warehousemanagement.view.form.LichSuKiemKeForm;
 import com.senko.warehousemanagement.view.form.NhanVienForm;
+import com.senko.warehousemanagement.view.form.ThongKeTienIchForm;
 import com.senko.warehousemanagement.view.form.VatTuForm;
 import java.net.URL;
 import javax.swing.ImageIcon;
@@ -27,14 +28,14 @@ public class Main extends javax.swing.JFrame {
             @Override
             public void selected(int index) {
                 if(index == 0){
-                   if(chucVu.equals("NhapXuat") || chucVu.equals("NghiemThu"))
+                   if(chucVu.equals("NhapXuat") || chucVu.equals("NghiemThu") || chucVu.equals("Admin"))
                     addForm(new VatTuForm());
                    else {
                         JOptionPane.showConfirmDialog(null,"Bạn có quyền sao??","Thông báo", JOptionPane.PLAIN_MESSAGE);
                    }
                 }
                 else if(index==1){
-                    if(chucVu.equals("NhapXuat"))
+                    if(chucVu.equals("NhapXuat") || chucVu.equals("Admin"))
                      addForm(new KhachHangForm());
                     else 
                         JOptionPane.showConfirmDialog(null,"Bạn có quyền sao??","Thông báo", JOptionPane.PLAIN_MESSAGE);
@@ -43,7 +44,7 @@ public class Main extends javax.swing.JFrame {
                      addForm(new NhanVienForm());
                 }
                 else if(index==3){
-                    if(chucVu.equals("KeToan"))
+                    if(chucVu.equals("KeToan") || chucVu.equals("Admin"))
                      addForm(new GiaoDichForm());
                     else 
                         JOptionPane.showConfirmDialog(null,"Bạn có quyền sao??","Thông báo", JOptionPane.PLAIN_MESSAGE);
@@ -52,10 +53,26 @@ public class Main extends javax.swing.JFrame {
                      addForm(new LichSuCapNhatForm());
                 }
                 else if (index==5){
-                    if(chucVu.equals("NghiemThu"))
+                    if(chucVu.equals("NghiemThu") || chucVu.equals("Admin"))
                      addForm(new LichSuKiemKeForm());
                     else 
                         JOptionPane.showConfirmDialog(null,"Bạn có quyền sao??","Thông báo", JOptionPane.PLAIN_MESSAGE);
+                }
+                else if (index==6){
+                    addForm(new ThongKeTienIchForm());
+                }
+                else if (index==7){
+                    dispose();
+                    try {
+                        System.out.println("[DEBUG] Tạo đối tượng Main...");
+                        FrameDangNhap frame = new FrameDangNhap();
+                        System.out.println("[DEBUG] Gọi setVisible(true)...");
+                        frame.setVisible(true);
+                        System.out.println("[DEBUG] Giao diện đã hiển thị.");
+                    } catch (Exception ex) {
+                        System.err.println("[ERROR] Lỗi khi tạo giao diện: " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
                 }
             }   
         });

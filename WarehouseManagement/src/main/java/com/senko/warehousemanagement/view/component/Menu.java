@@ -33,8 +33,8 @@ public class Menu extends javax.swing.JPanel {
         listMenu1.addItem("Giao Dịch");
         listMenu1.addItem("Lịch sử cập nhật giá");
         listMenu1.addItem("Lịch sử kiểm kê");
-        
-        
+        listMenu1.addItem("Thống kê");
+        listMenu1.addItem("Đăng xuất");
     }
 
     

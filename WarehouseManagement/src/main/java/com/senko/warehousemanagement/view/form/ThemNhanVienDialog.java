@@ -29,7 +29,7 @@ public class ThemNhanVienDialog extends javax.swing.JDialog {
                 if(isEdit){
                     try{
                         table.editItem(nameTextField.getText(),
-                                dateTextField.getText(),salaryTextField.getText(),positionTextField.getText());
+                                dateTextField.getText(),salaryTextField.getText(),positionTextField.getText(),emailField.getText());
                         table.repaint();
                         table.revalidate();
                         JOptionPane.showConfirmDialog(null,"Sửa thành công","Thông báo", JOptionPane.PLAIN_MESSAGE);
@@ -42,7 +42,7 @@ public class ThemNhanVienDialog extends javax.swing.JDialog {
                 else{
                     try{
                         table.addItem(nameTextField.getText(),
-                                dateTextField.getText(),salaryTextField.getText(),positionTextField.getText());
+                                dateTextField.getText(),salaryTextField.getText(),positionTextField.getText(),emailField.getText());
                         table.repaint();
                         table.revalidate();
                         JOptionPane.showConfirmDialog(null,"Thêm thành công","Thông báo", JOptionPane.PLAIN_MESSAGE);
@@ -62,6 +62,7 @@ public class ThemNhanVienDialog extends javax.swing.JDialog {
         this.dateTextField.setText(obj[2].toString());
         this.salaryTextField.setText(String.valueOf(obj[3]));
         this.positionTextField.setText((String)obj[4]);
+        this.emailField.setText((String)obj[5]);
     }
     
 
@@ -75,6 +76,7 @@ public class ThemNhanVienDialog extends javax.swing.JDialog {
         salaryTextField = new javax.swing.JTextField();
         positionTextField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        emailField = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -92,6 +94,8 @@ public class ThemNhanVienDialog extends javax.swing.JDialog {
 
         jButton1.setText("OK");
 
+        emailField.setText("Email");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -100,16 +104,17 @@ public class ThemNhanVienDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(positionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(salaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(dateTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(42, 42, 42)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(nameTextField)
+                            .addComponent(dateTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
+                            .addComponent(salaryTextField)
+                            .addComponent(positionTextField)
+                            .addComponent(emailField)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(63, 63, 63)
+                        .addGap(215, 215, 215)
                         .addComponent(jButton1)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -123,10 +128,12 @@ public class ThemNhanVienDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(salaryTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(positionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addComponent(positionTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(emailField, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
                 .addComponent(jButton1)
-                .addGap(17, 17, 17))
+                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         pack();
@@ -149,6 +156,7 @@ public class ThemNhanVienDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField dateTextField;
+    private javax.swing.JTextField emailField;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField nameTextField;

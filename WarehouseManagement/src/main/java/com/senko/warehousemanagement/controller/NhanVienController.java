@@ -16,7 +16,7 @@ public class NhanVienController {
     public Object[][] getNhanVienFromModel(){
         ArrayList<NhanVien> nhanVienList = model.getAllNhanVien();
         
-        int colNum = 5;
+        int colNum = 6;
         int rowNum = nhanVienList.size();
         Object[][] data = new Object[rowNum][colNum];
         
@@ -26,18 +26,18 @@ public class NhanVienController {
             data[i][2] = nhanVienList.get(i).getNgayVaoLam();
             data[i][3] = nhanVienList.get(i).getLuong();
             data[i][4] = nhanVienList.get(i).getChucVu();
-            
+            data[i][5] = nhanVienList.get(i).getEmail();
         }
         return data;
     }
     
-    public boolean themNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu){
-        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty()){
+    public boolean themNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email){
+        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty() || email.trim().isEmpty()){
             return false;
         }
         Date nvl = Date.valueOf(ngayVaoLam);
         try{
-            model.insertNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu);
+            model.insertNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu, email);
             return true;
         }   
         catch(Exception e){
@@ -55,13 +55,13 @@ public class NhanVienController {
             return false;
         }
     }
-    public boolean capNhatNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, int maNhanVien){
-        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty()){
+    public boolean capNhatNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email, int maNhanVien){
+        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty() || email.trim().isEmpty()){
             return false;
         }
         Date nvl = Date.valueOf(ngayVaoLam);
         try{
-            model.updateNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu, maNhanVien);
+            model.updateNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu, email, maNhanVien);
             return true;
         }
         catch(Exception e){
@@ -77,5 +77,24 @@ public class NhanVienController {
             return nhanVien;
         }
         return null;
+    }
+
+    public boolean kiemTraEmailTonTai(String email) {
+        try{
+            return model.isEmailExists(email);
+        }catch(Exception e){
+            return false;
+        }
+        
+    }
+
+    public boolean capNhatMatKhau(String email, String matKhauMoi) {
+        try{
+           model.updatePassword(email, matKhauMoi);
+           return true;
+        }catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -77,4 +77,8 @@ public class GiaoDichController {
         }
     
     }
+
+    public int getSoLuongTheoLoaiGiaoDich(String loaiGiaoDich) {
+        return model.getQuantityByType(loaiGiaoDich);
+    }
 }

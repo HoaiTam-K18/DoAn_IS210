@@ -26,8 +26,9 @@ public class NhanVienDAO {
                     rs.getDate("NgayVaoLam").toLocalDate(),
                     rs.getLong("Luong"),
                     rs.getString("ChucVu"),
-                    rs.getString("Username"),
-                    rs.getString("Password")
+                    rs.getString("TenDangNhap"),
+                    rs.getString("MatKhau"),
+                    rs.getString("Email")
                 );
             
                 dsNhanVien.add(current);
@@ -38,15 +39,16 @@ public class NhanVienDAO {
         }
         return dsNhanVien;
     }
-    
-    public void insertNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu){
-        String query = "INSERT INTO NHANVIEN(TenNV, NgayVaoLam, Luong, ChucVu) VALUES (?,?,?,?)";
+
+    public void insertNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu, String email){
+        String query = "INSERT INTO NHANVIEN(TenNV, NgayVaoLam, Luong, ChucVu, Email) VALUES (?,?,?,?,?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, tenNhanVien);
             stmt.setDate(2, ngayVaoLam);
             stmt.setLong(3, luong);
             stmt.setString(4, chucVu);
+            stmt.setString(5, email);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -63,9 +65,9 @@ public class NhanVienDAO {
             e.printStackTrace();
         }
     }
-    
-    public void updateNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu, int maNhanVien){
-        String query = "UPDATE NHANVIEN SET TenNV = ?, NgayVaoLam = ?, Luong = ?, ChucVu = ?"
+
+    public void updateNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu, String email, int maNhanVien){
+        String query = "UPDATE NHANVIEN SET TenNV = ?, NgayVaoLam = ?, Luong = ?, ChucVu = ?, Email = ?"
                          + "WHERE MaNV = ?";
         try(Connection con = DatabaseConnection.getConnection();
             PreparedStatement stmt = con.prepareStatement(query)){
@@ -73,7 +75,8 @@ public class NhanVienDAO {
             stmt.setDate(2, ngayVaoLam);
             stmt.setLong(3, luong);
             stmt.setString(4, chucVu);
-            stmt.setInt(5, maNhanVien);
+            stmt.setString(5, email);
+            stmt.setInt(6, maNhanVien);
             stmt.executeUpdate();
         }catch (SQLException e) {
             e.printStackTrace();
@@ -103,7 +106,7 @@ public class NhanVienDAO {
      
     public NhanVien getNhanVienByUsername(String username){
         NhanVien nhanVien = null;
-        String query = "SELECT * FROM NHANVIEN WHERE USERNAME = ?";
+        String query = "SELECT * FROM NHANVIEN WHERE TENDANGNHAP = ?";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
@@ -117,8 +120,9 @@ public class NhanVienDAO {
                     rs.getDate("NgayVaoLam").toLocalDate(),
                     rs.getLong("Luong"),
                     rs.getString("ChucVu"),
-                    rs.getString("Username"),
-                    rs.getString("Password")
+                    rs.getString("TenDangNhap"),
+                    rs.getString("MatKhau"),
+                    rs.getString("Email")
                 );
             }
             return nhanVien;
@@ -128,4 +132,33 @@ public class NhanVienDAO {
             return nhanVien;
         }
     }
+
+    public boolean isEmailExists(String email) {
+        String query = "SELECT COUNT(*) FROM NHANVIEN WHERE Email = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0; // Trả về true nếu có ít nhất một bản ghi
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void updatePassword(String email, String newPassword) {
+        String query = "UPDATE NHANVIEN SET MatKhau = ? WHERE Email = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, newPassword);
+            stmt.setString(2, email);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    
 }

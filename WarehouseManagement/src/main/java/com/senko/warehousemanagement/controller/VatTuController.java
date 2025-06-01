@@ -79,5 +79,22 @@ public class VatTuController {
         }
     
     }
+    public int getSoLuongTheoTrangThai(String trangThai) {
+        int trangThaiInt = 0;
+        switch (trangThai.toLowerCase()) {
+            case "con_hang":
+                trangThaiInt = 1;
+                break;
+            case "het_hang":
+                trangThaiInt = 2;
+                break;
+            case "sap_het":
+                trangThaiInt = 3;
+                break;
+            default:
+                throw new IllegalArgumentException("Trang thai khong hop le: " + trangThai);
+        }
+        return model.getSoLuongTheoTrangThai(trangThaiInt);
+    }
 }
 
