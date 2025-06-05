@@ -1,10 +1,13 @@
 
 package com.senko.warehousemanagement.view.stuff;
 
-import com.senko.warehousemanagement.controller.LichSuCapNhatGiaController;
+import com.senko.warehousemanagement.controller.LoaiVatTuController;
+import com.senko.warehousemanagement.controller.NhaCungCapController;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Arrays;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -13,16 +16,16 @@ import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
 
-public class LichSuCapNhatGiaTable extends JTable {
+public class NhaCungCapTable extends JTable{
     private DefaultTableModel model;
-    private LichSuCapNhatGiaController controller = new LichSuCapNhatGiaController();
+    private NhaCungCapController controller = new NhaCungCapController();
     private TableRowSorter<TableModel> rowSorter;
     
-    Object[][] data = controller.getLichSuCapNhatGiaFromModel();
+    Object[][] data = controller.getNhaCungCapFromModel();
     
-    String[] columns = {"Mã lịch sử cập nhật","Vật tư","Giá cũ","Giá mới","Ngày cập nhật"};
+    String[] columns = {"Mã nhà cung cấp","Tên nhà cung cấp","Số điện thoại"};
     
-    public LichSuCapNhatGiaTable(){
+    public NhaCungCapTable(){
         model = new DefaultTableModel(data, columns);
         this.setModel(model);
         rowSorter = new TableRowSorter<>(this.getModel());
@@ -56,13 +59,31 @@ public class LichSuCapNhatGiaTable extends JTable {
     }
     
     public void refresh(){
-        Object[][] data = controller.getLichSuCapNhatGiaFromModel();
+        Object[][] data = controller.getNhaCungCapFromModel();
         model = new DefaultTableModel(data,columns);
         setModel(model);
+        // Thêm dòng này để cập nhật lại TableRowSorter
         rowSorter = new TableRowSorter<>(model);
         setRowSorter(rowSorter);
         repaint();
         revalidate();
+}
+    
+    public void addItem(String tenNhaCungCap, String soDienThoai){
+        controller.themNhaCungCapVaoModel(tenNhaCungCap, soDienThoai);
+        refresh();
+    }
+    
+    public void deleteItem(){
+        int maNhaCungCap = (Integer) model.getValueAt(getSelectedRow(), 0);
+        controller.xoaNhaCungCap(maNhaCungCap);
+        refresh();
+    }
+
+    public void editItem(String tenNhaCungCap, String soDienThoai){
+        int maNhaCungCap = (Integer) model.getValueAt(getSelectedRow(), 0);
+        controller.capNhatNhaCungCapVaoModel(tenNhaCungCap, soDienThoai, maNhaCungCap);
+        refresh();
     }
     
     public Object[] getItemAt(int row){

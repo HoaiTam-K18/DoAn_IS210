@@ -58,12 +58,14 @@ public class NhanVienTable extends JTable{
         Object[][] data = controller.getNhanVienFromModel();
         model = new DefaultTableModel(data,columns);
         setModel(model);
+        rowSorter = new TableRowSorter<>(model);
+        setRowSorter(rowSorter);
         repaint();
         revalidate();
     }
     
-    public void addItem(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email){
-        controller.themNhanVienVaoModel(tenNhanVien, ngayVaoLam, luong, chucVu, email);
+    public void addItem(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email, String tenDangNhap, String matKhau){
+        controller.themNhanVienVaoModel(tenNhanVien, ngayVaoLam, luong, chucVu, email, tenDangNhap, matKhau);
         refresh();
     }
     
@@ -73,9 +75,9 @@ public class NhanVienTable extends JTable{
         refresh();
     }
     
-    public void editItem(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email){
+    public void editItem(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email, String tenDangNhap, String matKhau){
         int maNhanVien = (Integer) model.getValueAt(getSelectedRow(), 0);
-        controller.capNhatNhanVienVaoModel(tenNhanVien, ngayVaoLam, luong, chucVu, email, maNhanVien);
+        controller.capNhatNhanVienVaoModel(tenNhanVien, ngayVaoLam, luong, chucVu, email, tenDangNhap, matKhau, maNhanVien);
         refresh();
     }
     public Object[] getItemAt(int row){

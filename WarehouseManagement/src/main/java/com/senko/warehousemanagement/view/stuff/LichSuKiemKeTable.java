@@ -60,12 +60,14 @@ public class LichSuKiemKeTable extends JTable {
         Object[][] data = controller.getLichSuKiemKeFromModel();
         model = new DefaultTableModel(data,columns);
         setModel(model);
+        rowSorter = new TableRowSorter<>(model);
+        setRowSorter(rowSorter);
         repaint();
         revalidate();
     }
     
     public void addItem(String nhanVien, String vatTu, String soLuongConLai, String tinhTrang){
-        controller.themLichSuKiemKeVaoModel(nhanVien,vatTu,soLuongConLai,tinhTrang);
+        controller.kiemKe(nhanVien,vatTu,soLuongConLai,tinhTrang);
         refresh();
     }
     public Object[] getItemAt(int row){

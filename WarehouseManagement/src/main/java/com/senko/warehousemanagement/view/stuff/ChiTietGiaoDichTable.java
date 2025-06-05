@@ -24,6 +24,7 @@ public class ChiTietGiaoDichTable extends JTable {
     private ChiTietNhapController controller = new ChiTietNhapController();
     private int maGiaoDich;
     private String loaiGiaoDich;
+    PopupMenu menu = new PopupMenu();
     
     public void setMaGiaoDich(int maGiaoDich){
         this.maGiaoDich = maGiaoDich;
@@ -94,7 +95,7 @@ public class ChiTietGiaoDichTable extends JTable {
         model = new DefaultTableModel(dataTable, (loaiGiaoDich.equals("Nhap"))? columns : columnsXuat);
         setModel(model);
         
-        PopupMenu menu = new PopupMenu();
+        
         
         
         menu.getAddItem().addActionListener(new ActionListener(){
@@ -130,14 +131,14 @@ public class ChiTietGiaoDichTable extends JTable {
             @Override
             public void mousePressed(MouseEvent e) {
                 if(e.isPopupTrigger()){
-                    menu.show(e.getComponent(), e.getX(), e.getY());
+                    showPopup(e);
                 }
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
                 if(e.isPopupTrigger()){
-                    menu.show(e.getComponent(), e.getX(), e.getY());
+                    showPopup(e);
                 }
             }
             
@@ -154,6 +155,7 @@ public class ChiTietGiaoDichTable extends JTable {
                     
                     boolean isFull = true;
                     for(int i = 0;i<model.getColumnCount();i++){
+                        if(i==2) continue; // Thành tiền sẽ được tính tự động
                         Object obj = modelChuan.getValueAt(row, i);
                         if(obj==null || obj.toString().trim().isEmpty()){
                             isFull = false;
@@ -164,20 +166,21 @@ public class ChiTietGiaoDichTable extends JTable {
                     if(isFull){
                         String tenVatTu = (String)modelChuan.getValueAt(row, 0);
                         String soLuong = modelChuan.getValueAt(row, 1).toString();
-                        String thanhTien = modelChuan.getValueAt(row, 2).toString();
                         String doiTuongGiaoDich = (String) modelChuan.getValueAt(row, 3);
                         if(row == editingRow){
                             if(loaiGiaoDich.equals("Nhap")) 
-                                controller.themChiTietNhapVaoModel(tenVatTu, soLuong, thanhTien, doiTuongGiaoDich, maGiaoDich);
+                                controller.nhapHang(tenVatTu, soLuong, doiTuongGiaoDich, maGiaoDich);
                             else
-                                controller.themChiTietXuatVaoModel(tenVatTu, soLuong, thanhTien, doiTuongGiaoDich, maGiaoDich);
+                                controller.xuatHang(tenVatTu, soLuong, doiTuongGiaoDich, maGiaoDich);
                             editingRow = -1;
+                            refresh();
                         }
                         else{
                             if(loaiGiaoDich.equals("Nhap"))
-                                controller.capNhatChiTietNhapVaoModel(tenVatTu, soLuong, thanhTien, doiTuongGiaoDich, maGiaoDich);
+                                controller.capNhatChiTietNhapVaoModel(tenVatTu, soLuong, doiTuongGiaoDich, maGiaoDich);
                             else
-                                controller.capNhatChiTietXuatVaoModel(tenVatTu, soLuong, thanhTien, doiTuongGiaoDich, maGiaoDich);
+                                controller.capNhatChiTietXuatVaoModel(tenVatTu, soLuong, doiTuongGiaoDich, maGiaoDich);
+                            refresh();
                         }
                     }
                     
@@ -232,5 +235,9 @@ public class ChiTietGiaoDichTable extends JTable {
     
     public int getRow(){
         return getSelectedRow();
+    }
+    
+    public void showPopup(MouseEvent e){
+        menu.show(e.getComponent(), e.getX(), e.getY());
     }
 }

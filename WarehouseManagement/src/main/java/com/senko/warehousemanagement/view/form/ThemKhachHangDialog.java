@@ -61,17 +61,7 @@ public class ThemKhachHangDialog extends javax.swing.JDialog {
         this.phoneTextField.setText((String)obj[2]);
     }
     
-    public String getStatusString(int status){
-        if(status==0){
-            return "Hết hàng";
-        }
-        if(status==1){
-            return "Sắp hết";
-        }
-        return "Còn hàng";
-        
-        
-    }
+    
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -126,6 +116,7 @@ public class ThemKhachHangDialog extends javax.swing.JDialog {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     public static void main(String args[]) {

@@ -36,44 +36,4 @@ public class LichSuCapNhatGiaController {
         }
         return data;
     }
-    
-    public boolean themNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu){
-        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty()){
-            return false;
-        }
-        Date nvl = Date.valueOf(ngayVaoLam);
-        try{
-            model.insertNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu);
-            return true;
-        }
-        catch(Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    
-    }
-    public boolean xoaNhanVien(int maNhanVien){
-        try{
-            model.deleteNhanVien(maNhanVien);
-            return true;
-        }
-        catch(Exception e){
-            return false;
-        }
-    }
-    public boolean capNhatNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, int maNhanVien){
-        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty()){
-            return false;
-        }
-        Date nvl = Date.valueOf(ngayVaoLam);
-        try{
-            model.updateNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu, maNhanVien);
-            return true;
-        }
-        catch(Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    
-    }
 }

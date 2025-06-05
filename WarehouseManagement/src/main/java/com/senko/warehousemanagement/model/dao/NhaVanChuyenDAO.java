@@ -59,7 +59,7 @@ public class NhaVanChuyenDAO {
     }
     
     public void insertNhaVanChuyen(String tenNhaVanChuyen, String soDienThoai){
-        String query = "INSERT INTO NhaVanChuyen(TENVC, SDT_DAIDIEN) VALUES (?,?)";
+        String query = "INSERT INTO NhaVanChuyen(TENNVC, SDT_DAIDIEN) VALUES (?,?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, tenNhaVanChuyen);

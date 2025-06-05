@@ -4,6 +4,7 @@ package com.senko.warehousemanagement.model.dao;
 import com.senko.warehousemanagement.model.DatabaseConnection;
 import com.senko.warehousemanagement.model.entities.LichSuCapNhatGia;
 import com.senko.warehousemanagement.model.entities.NhanVien;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -39,65 +40,34 @@ public class LichSuCapNhatGiaDAO {
         return dsLichSuCapNhatGia;
     }
     
-    public void insertNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu){
-        String query = "INSERT INTO NHANVIEN(TenNV, NgayVaoLam, Luong, ChucVu) VALUES (?,?,?,?)";
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, tenNhanVien);
-            stmt.setDate(2, ngayVaoLam);
-            stmt.setLong(3, luong);
-            stmt.setString(4, chucVu);
-            stmt.executeUpdate();
+    public boolean thayDoiGia(int maVatTu, long giaMoi) {
+        Connection conn = null;
+        CallableStatement stmt = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            // Đặt isolation level nếu cần, ví dụ SERIALIZABLE
+            conn.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+            conn.setAutoCommit(false); // Bắt đầu transaction
+
+            stmt = conn.prepareCall("{call TRANSACTION_THAY_DOI_GIA(?, ?)}");
+            stmt.setInt(1, maVatTu);
+            stmt.setLong(2, giaMoi);
+            stmt.execute();
+
+            conn.commit(); // Commit nếu không lỗi
+            return true;
         } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void deleteNhanVien(int maNhanVien){
-        String query = "DELETE FROM VATTU WHERE MaVT = ?";
-        try(Connection con = DatabaseConnection.getConnection();
-            PreparedStatement stmt = con.prepareStatement(query)){
-            stmt.setInt(1,maNhanVien);
-            stmt.executeUpdate();
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public void updateNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu, int maNhanVien){
-        String query = "UPDATE NHANVIEN SET TenNV = ?, NgayVaoLam = ?, Luong = ?, ChucVu = ?"
-                         + "WHERE MaNV = ?";
-        try(Connection con = DatabaseConnection.getConnection();
-            PreparedStatement stmt = con.prepareStatement(query)){
-            stmt.setString(1,tenNhanVien);
-            stmt.setDate(2, ngayVaoLam);
-            stmt.setLong(3, luong);
-            stmt.setString(4, chucVu);
-            stmt.setInt(5, maNhanVien);
-            stmt.executeUpdate();
-        }catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    
-     public int getMaNhanVien(String nhanVien) {
-        int maNhanVien = 0;
-        String query = "SELECT MANV FROM NHANVIEN WHERE TENNV = ?";
-
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, nhanVien);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                maNhanVien = rs.getInt("MALVT");
+            if (conn != null) {
+                try { conn.rollback(); } catch (SQLException ex) { ex.printStackTrace(); }
             }
-
-        } catch (SQLException e) {
             e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.setAutoCommit(true);
+                if (conn != null) conn.close();
+            } catch (SQLException ex) { ex.printStackTrace(); }
         }
-
-        return maNhanVien;
     }
 }

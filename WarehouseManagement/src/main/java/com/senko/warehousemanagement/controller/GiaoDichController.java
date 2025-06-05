@@ -16,6 +16,7 @@ public class GiaoDichController {
     public GiaoDichController(){
         model = new GiaoDichDAO();
         modelNVC = new NhaVanChuyenDAO();
+        modelNV = new NhanVienDAO();
     }
     
     public Object[][] getGiaoDichFromModel(){

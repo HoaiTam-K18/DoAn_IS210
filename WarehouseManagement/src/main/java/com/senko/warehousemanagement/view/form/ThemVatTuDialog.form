@@ -6,7 +6,7 @@
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
-    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="true"/>
   </SyntheticProperties>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
@@ -32,11 +32,10 @@
                           <Component id="nameTextField" max="32767" attributes="0"/>
                           <Component id="typeTextField" pref="421" max="32767" attributes="0"/>
                           <Component id="priceNhapTextField" max="32767" attributes="0"/>
-                          <Component id="priceXuatTextField" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="214" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="212" max="-2" attributes="0"/>
                       <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -55,11 +54,9 @@
               <Component id="typeTextField" min="-2" pref="32" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="priceNhapTextField" min="-2" pref="32" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="priceXuatTextField" min="-2" pref="32" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
               <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="26" max="32767" attributes="0"/>
+              <EmptySpace pref="29" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -87,11 +84,6 @@
     <Component class="javax.swing.JTextField" name="priceNhapTextField">
       <Properties>
         <Property name="text" type="java.lang.String" value="Gi&#xe1; Nh&#x1ead;p"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="priceXuatTextField">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Gi&#xe1; Xu&#x1ea5;t"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="jButton1">

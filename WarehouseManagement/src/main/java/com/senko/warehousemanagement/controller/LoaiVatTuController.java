@@ -2,9 +2,7 @@
 package com.senko.warehousemanagement.controller;
 
 import com.senko.warehousemanagement.model.dao.LoaiVatTuDAO;
-import com.senko.warehousemanagement.model.dao.NhaVanChuyenDAO;
 import com.senko.warehousemanagement.model.entities.LoaiVatTu;
-import com.senko.warehousemanagement.model.entities.NhaVanChuyen;
 import java.util.ArrayList;
 
 

@@ -2,7 +2,10 @@
 package com.senko.warehousemanagement.view.form;
 
 import com.senko.warehousemanagement.controller.GiaoDichController;
+import com.senko.warehousemanagement.controller.LoaiVatTuController;
+import com.senko.warehousemanagement.controller.NhaVanChuyenController;
 import com.senko.warehousemanagement.controller.VatTuController;
+import javax.swing.JOptionPane;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -101,6 +104,11 @@ public class ThongKeTienIchForm extends javax.swing.JPanel {
         jTextField1.setText("TenLVT");
 
         jButton1.setText("Thêm");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -128,6 +136,11 @@ public class ThongKeTienIchForm extends javax.swing.JPanel {
         jTextField3.setText("SĐT");
 
         jButton2.setText("Thêm");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -203,6 +216,26 @@ public class ThongKeTienIchForm extends javax.swing.JPanel {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        try{
+            loaiVatTuTable1.addItem(jTextField1.getText());
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Thêm loại vật tư thất bại. Vui lòng kiểm tra lại thông tin.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        try{
+            nhaVanChuyenTable1.addItem(jTextField2.getText(), jTextField3.getText());
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(this, "Thêm nhà vận chuyển thất bại. Vui lòng kiểm tra lại thông tin.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

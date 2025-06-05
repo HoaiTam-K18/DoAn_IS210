@@ -3,6 +3,8 @@ package com.senko.warehousemanagement.view.stuff;
 import com.senko.warehousemanagement.controller.LoaiVatTuController;
 import java.awt.Color;
 import java.awt.Component;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -14,6 +16,7 @@ public class LoaiVatTuTable extends JTable{
     private DefaultTableModel model;
     private LoaiVatTuController controller = new LoaiVatTuController();
     private TableRowSorter<TableModel> rowSorter;
+    private JPopupMenu menu = new JPopupMenu();
     
     Object[][] data = controller.getLoaiVatTuFromModel();
     
@@ -50,15 +53,46 @@ public class LoaiVatTuTable extends JTable{
             }
             
         });
+        JMenuItem item = new JMenuItem("Xóa");
+        menu.add(item);
+        item.addActionListener(e -> {
+            if(getSelectedRow() != -1){
+                deleteItem();
+                refresh();
+            }
+        });
+
+        addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    int row = rowAtPoint(evt.getPoint());
+                    setRowSelectionInterval(row, row);
+                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+
+            @Override
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                if (evt.isPopupTrigger()) {
+                    int row = rowAtPoint(evt.getPoint());
+                    setRowSelectionInterval(row, row);
+                    menu.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+        });
     }
     
     public void refresh(){
         Object[][] data = controller.getLoaiVatTuFromModel();
         model = new DefaultTableModel(data,columns);
         setModel(model);
+        // Thêm dòng này để cập nhật lại TableRowSorter
+        rowSorter = new TableRowSorter<>(model);
+        setRowSorter(rowSorter);
         repaint();
         revalidate();
-    }
+}
     
     public void addItem(String tenLoaiVatTu){
         controller.themLoaiVatTuVaoModel(tenLoaiVatTu);

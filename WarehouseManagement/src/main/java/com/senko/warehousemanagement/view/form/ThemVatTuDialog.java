@@ -28,7 +28,7 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
                 if(isEdit){
                     try{
                         table.editItem(nameTextField.getText(),
-                                typeTextField.getText(),priceNhapTextField.getText(),priceXuatTextField.getText());
+                                typeTextField.getText(),priceNhapTextField.getText());
                         table.repaint();
                         table.revalidate();
                         JOptionPane.showConfirmDialog(null,"Sửa thành công","Thông báo", JOptionPane.PLAIN_MESSAGE);
@@ -41,7 +41,7 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
                 else{
                     try{
                         table.addItem(nameTextField.getText(),
-                                typeTextField.getText(),priceNhapTextField.getText(),priceXuatTextField.getText());
+                                typeTextField.getText(),priceNhapTextField.getText());
                         table.repaint();
                         table.revalidate();
                         JOptionPane.showConfirmDialog(null,"Thêm thành công","Thông báo", JOptionPane.PLAIN_MESSAGE);
@@ -60,7 +60,6 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
         this.nameTextField.setText((String)obj[1]);
         this.typeTextField.setText((String)obj[2]);
         this.priceNhapTextField.setText(String.valueOf(obj[3]));
-        this.priceXuatTextField.setText(String.valueOf(obj[4]));
     }
     
     public String getStatusString(int status){
@@ -83,7 +82,6 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
         nameTextField = new javax.swing.JTextField();
         typeTextField = new javax.swing.JTextField();
         priceNhapTextField = new javax.swing.JTextField();
-        priceXuatTextField = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -97,8 +95,6 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
         typeTextField.setText("Loại Vật Tư");
 
         priceNhapTextField.setText("Giá Nhập");
-
-        priceXuatTextField.setText("Giá Xuất");
 
         jButton1.setText("OK");
 
@@ -114,10 +110,9 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(nameTextField)
                             .addComponent(typeTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
-                            .addComponent(priceNhapTextField)
-                            .addComponent(priceXuatTextField)))
+                            .addComponent(priceNhapTextField)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(214, 214, 214)
+                        .addGap(212, 212, 212)
                         .addComponent(jButton1)))
                 .addContainerGap(42, Short.MAX_VALUE))
         );
@@ -132,14 +127,13 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
                 .addComponent(typeTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(priceNhapTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(priceXuatTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(28, 28, 28)
                 .addComponent(jButton1)
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     public static void main(String args[]) {
@@ -162,7 +156,6 @@ public class ThemVatTuDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JTextField priceNhapTextField;
-    private javax.swing.JTextField priceXuatTextField;
     private javax.swing.JTextField typeTextField;
     // End of variables declaration//GEN-END:variables
 }
