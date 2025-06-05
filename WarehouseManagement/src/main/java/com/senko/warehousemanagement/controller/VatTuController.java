@@ -1,6 +1,7 @@
 
 package com.senko.warehousemanagement.controller;
 
+import com.senko.warehousemanagement.model.dao.LichSuCapNhatGiaDAO;
 import com.senko.warehousemanagement.model.entities.VatTu;
 import com.senko.warehousemanagement.model.dao.VatTuDAO;
 import com.senko.warehousemanagement.model.dao.LoaiVatTuDAO;
@@ -10,10 +11,12 @@ import java.util.ArrayList;
 public class VatTuController {
     private VatTuDAO model;
     private LoaiVatTuDAO modelLVT;
+    private LichSuCapNhatGiaDAO modelCNG;
     
     public VatTuController(){
         model = new VatTuDAO();
         modelLVT = new LoaiVatTuDAO();
+        modelCNG = new LichSuCapNhatGiaDAO();
     }
     
     public Object[][] getVatTuFromModel(){
@@ -36,15 +39,15 @@ public class VatTuController {
         return data;
     }
     
-    public boolean themVatTuVaoModel(String tenVatTu, String loaiVT, String donGiaNhap, String donGiaXuat){
-        if(tenVatTu.trim().isEmpty()||loaiVT.trim().isEmpty()||donGiaNhap.trim().isEmpty()||donGiaXuat.trim().isEmpty()){
+    public boolean themVatTuVaoModel(String tenVatTu, String loaiVT, String donGiaNhap){
+        if(tenVatTu.trim().isEmpty()||loaiVT.trim().isEmpty()||donGiaNhap.trim().isEmpty()){
             return false;
         }
         int maLoaiVatTu = 0;
         maLoaiVatTu = modelLVT.getMaLoaiVatTu(loaiVT.trim());
         System.out.println(maLoaiVatTu);
         try{
-            model.insertVatTu(tenVatTu, maLoaiVatTu, Long.parseLong(donGiaNhap), Long.parseLong(donGiaXuat));
+            model.insertVatTu(tenVatTu, maLoaiVatTu, Long.parseLong(donGiaNhap));
             return true;
         }
         catch(Exception e){
@@ -62,15 +65,16 @@ public class VatTuController {
             return false;
         }
     }
-    public boolean capNhatVatTuVaoModel(String tenVatTu, String loaiVT, String donGiaNhap, String donGiaXuat, int maVatTu){
-        if(tenVatTu.trim().isEmpty()||loaiVT.trim().isEmpty()||donGiaNhap.trim().isEmpty()||donGiaXuat.trim().isEmpty()){
+    public boolean capNhatVatTuVaoModel(String tenVatTu, String loaiVT, String donGiaNhap, int maVatTu){
+        if(tenVatTu.trim().isEmpty()||loaiVT.trim().isEmpty()||donGiaNhap.trim().isEmpty()){
             return false;
         }
         int maLoaiVatTu = 0;
         maLoaiVatTu = modelLVT.getMaLoaiVatTu(loaiVT.trim());
         System.out.println(maLoaiVatTu);
         try{
-            model.updateVatTu(tenVatTu, maLoaiVatTu, Long.parseLong(donGiaNhap), Long.parseLong(donGiaXuat), maVatTu);
+            modelCNG.thayDoiGia(maVatTu, Long.parseLong(donGiaNhap));
+            model.updateVatTu(tenVatTu, maLoaiVatTu, maVatTu);
             return true;
         }
         catch(Exception e){
@@ -80,16 +84,16 @@ public class VatTuController {
     
     }
     public int getSoLuongTheoTrangThai(String trangThai) {
-        int trangThaiInt = 0;
+        int trangThaiInt = -1;
         switch (trangThai.toLowerCase()) {
             case "con_hang":
-                trangThaiInt = 1;
-                break;
-            case "het_hang":
                 trangThaiInt = 2;
                 break;
+            case "het_hang":
+                trangThaiInt = 0;
+                break;
             case "sap_het":
-                trangThaiInt = 3;
+                trangThaiInt = 1;
                 break;
             default:
                 throw new IllegalArgumentException("Trang thai khong hop le: " + trangThai);

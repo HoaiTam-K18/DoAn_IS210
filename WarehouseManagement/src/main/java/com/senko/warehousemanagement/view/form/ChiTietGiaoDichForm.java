@@ -2,6 +2,8 @@
 package com.senko.warehousemanagement.view.form;
 
 import com.senko.warehousemanagement.view.stuff.GiaoDichTable;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 
 public class ChiTietGiaoDichForm extends javax.swing.JDialog {
@@ -15,6 +17,22 @@ public class ChiTietGiaoDichForm extends javax.swing.JDialog {
         
         super(parent, modal);
         initComponents();
+        addMouseListener(new MouseAdapter(){
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if(e.isPopupTrigger()){
+                    chiTietHoaDonTable1.showPopup(e);
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(e.isPopupTrigger()){
+                    chiTietHoaDonTable1.showPopup(e);
+                }
+            }
+            
+        });
     }
     
     public void initDetails(String loaiGiaoDich){

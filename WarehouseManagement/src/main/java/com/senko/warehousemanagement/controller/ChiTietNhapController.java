@@ -56,14 +56,14 @@ public class ChiTietNhapController {
         return data;
     }
     
-    public boolean themChiTietNhapVaoModel(String vatTu, String soLuong, String thanhTien, String nhaCungCap, int maGiaoDich){
-        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||thanhTien.trim().isEmpty()||nhaCungCap.trim().isEmpty()){
+    public boolean themChiTietNhapVaoModel(String vatTu, String soLuong, String nhaCungCap, int maGiaoDich){
+        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||nhaCungCap.trim().isEmpty()){
             return false;
         }
         int maVatTu = modelVT.getMaVatTu(vatTu);
         int maNhaCungCap = modelNCC.getMaNhaCungCap(nhaCungCap);
         try{
-            model.insertChiTietNhap(maVatTu, Integer.parseInt(soLuong), Long.parseLong(thanhTien), maNhaCungCap, maGiaoDich);
+            model.insertChiTietNhap(maVatTu, Integer.parseInt(soLuong), maNhaCungCap, maGiaoDich);
             return true;
         }
         catch(Exception e){
@@ -73,14 +73,14 @@ public class ChiTietNhapController {
     
     }
     
-    public boolean themChiTietXuatVaoModel(String vatTu, String soLuong, String thanhTien, String khachHang, int maGiaoDich){
-        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||thanhTien.trim().isEmpty()||khachHang.trim().isEmpty()){
+    public boolean themChiTietXuatVaoModel(String vatTu, String soLuong, String khachHang, int maGiaoDich){
+        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||khachHang.trim().isEmpty()){
             return false;
         }
         int maVatTu = modelVT.getMaVatTu(vatTu);
         int maKhachHang = modelKH.getMaKhachHang(khachHang);
         try{
-            model.insertChiTietXuat(maVatTu, Integer.parseInt(soLuong), Long.parseLong(thanhTien), maKhachHang, maGiaoDich);
+            model.insertChiTietXuat(maVatTu, Integer.parseInt(soLuong), maKhachHang, maGiaoDich);
             return true;
         }
         catch(Exception e){
@@ -112,14 +112,14 @@ public class ChiTietNhapController {
         }
     }
     
-    public boolean capNhatChiTietNhapVaoModel(String vatTu, String soLuong, String thanhTien, String nhaCungCap, int maGiaoDich){
-        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||thanhTien.trim().isEmpty()||nhaCungCap.trim().isEmpty()){
+    public boolean capNhatChiTietNhapVaoModel(String vatTu, String soLuong, String nhaCungCap, int maGiaoDich){
+        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||nhaCungCap.trim().isEmpty()){
             return false;
         }
         int maVatTu = modelVT.getMaVatTu(vatTu);
         int maNhaCungCap = modelNCC.getMaNhaCungCap(nhaCungCap);
         try{
-            model.updateChiTietNhap(maVatTu, Integer.parseInt(soLuong), Long.parseLong(thanhTien), maNhaCungCap, maGiaoDich);
+            model.updateChiTietNhap(maVatTu, Integer.parseInt(soLuong), maNhaCungCap, maGiaoDich);
             return true;
         }
         catch(Exception e){
@@ -129,14 +129,14 @@ public class ChiTietNhapController {
     
     }
     
-    public boolean capNhatChiTietXuatVaoModel(String vatTu, String soLuong, String thanhTien, String khachHang, int maGiaoDich){
-        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||thanhTien.trim().isEmpty()||khachHang.trim().isEmpty()){
+    public boolean capNhatChiTietXuatVaoModel(String vatTu, String soLuong, String khachHang, int maGiaoDich){
+        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||khachHang.trim().isEmpty()){
             return false;
         }
         int maVatTu = modelVT.getMaVatTu(vatTu);
         int maKhachHang = modelKH.getMaKhachHang(khachHang);
         try{
-            model.updateChiTietXuat(maVatTu, Integer.parseInt(soLuong), Long.parseLong(thanhTien), maKhachHang, maGiaoDich);
+            model.updateChiTietXuat(maVatTu, Integer.parseInt(soLuong), maKhachHang, maGiaoDich);
             return true;
         }
         catch(Exception e){
@@ -144,5 +144,37 @@ public class ChiTietNhapController {
             return false;
         }
     
+    }
+
+    public boolean nhapHang(String vatTu, String soLuong, String nhaCungCap, int maGiaoDich){
+        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||nhaCungCap.trim().isEmpty()){
+            return false;
+        }
+        int maVatTu = modelVT.getMaVatTu(vatTu);
+        int maNhaCungCap = modelNCC.getMaNhaCungCap(nhaCungCap);
+        try{
+            model.nhapHang(maVatTu, Integer.parseInt(soLuong), maNhaCungCap, maGiaoDich);
+            return true;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean xuatHang(String vatTu, String soLuong, String khachHang, int maGiaoDich){
+        if(vatTu.trim().isEmpty()||soLuong.trim().isEmpty()||khachHang.trim().isEmpty()){
+            return false;
+        }
+        int maVatTu = modelVT.getMaVatTu(vatTu);
+        int maKhachHang = modelKH.getMaKhachHang(khachHang);
+        try{
+            model.xuatHang(maVatTu, Integer.parseInt(soLuong), maKhachHang, maGiaoDich);
+            return true;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
     }
 }

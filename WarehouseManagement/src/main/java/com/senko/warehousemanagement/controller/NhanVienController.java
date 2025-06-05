@@ -31,13 +31,14 @@ public class NhanVienController {
         return data;
     }
     
-    public boolean themNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email){
-        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty() || email.trim().isEmpty()){
+    public boolean themNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email, String tenDangNhap, String matKhau){
+         // Kiểm tra các trường không được để trống
+        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty() || email.trim().isEmpty() || tenDangNhap.trim().isEmpty() || matKhau.trim().isEmpty()){
             return false;
         }
         Date nvl = Date.valueOf(ngayVaoLam);
         try{
-            model.insertNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu, email);
+            model.insertNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu, email, tenDangNhap, matKhau);
             return true;
         }   
         catch(Exception e){
@@ -55,13 +56,13 @@ public class NhanVienController {
             return false;
         }
     }
-    public boolean capNhatNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email, int maNhanVien){
-        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty() || email.trim().isEmpty()){
+    public boolean capNhatNhanVienVaoModel(String tenNhanVien, String ngayVaoLam, String luong, String chucVu, String email, String tenDangNhap, String matKhau, int maNhanVien){
+        if(tenNhanVien.trim().isEmpty()||ngayVaoLam.trim().isEmpty()||luong.trim().isEmpty()||chucVu.trim().isEmpty() || email.trim().isEmpty() || tenDangNhap.trim().isEmpty() || matKhau.trim().isEmpty()){
             return false;
         }
         Date nvl = Date.valueOf(ngayVaoLam);
         try{
-            model.updateNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu, email, maNhanVien);
+            model.updateNhanVien(tenNhanVien, nvl, Long.parseLong(luong), chucVu, email, tenDangNhap, matKhau, maNhanVien);
             return true;
         }
         catch(Exception e){

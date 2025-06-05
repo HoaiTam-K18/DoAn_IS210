@@ -64,6 +64,8 @@ public class KhachHangTable extends JTable{
         Object[][] data = controller.getKhachHangFromModel();
         model = new DefaultTableModel(data,columns);
         setModel(model);
+        rowSorter = new TableRowSorter<>(model);
+        setRowSorter(rowSorter);
         repaint();
         revalidate();
     }

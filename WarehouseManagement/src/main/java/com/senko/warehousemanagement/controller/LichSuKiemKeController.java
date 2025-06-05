@@ -56,4 +56,20 @@ public class LichSuKiemKeController {
         }
     
     }
+    
+    public boolean kiemKe(String nhanVien, String vatTu, String soLuongConLai, String tinhTrang){
+        if(nhanVien.trim().isEmpty()||vatTu.trim().isEmpty()||soLuongConLai.trim().isEmpty()||tinhTrang.trim().isEmpty()){
+            return false;
+        }
+        int maNhanVien = modelNV.getMaNhanVien(nhanVien);
+        int maVatTu = modelVT.getMaVatTu(vatTu);
+        try{
+            model.kiemKe(maNhanVien, maVatTu, Integer.parseInt(soLuongConLai), tinhTrang);
+            return true;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

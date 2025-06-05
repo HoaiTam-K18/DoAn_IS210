@@ -64,12 +64,14 @@ public class VatTuTable extends JTable{
         Object[][] data = controller.getVatTuFromModel();
         model = new DefaultTableModel(data,columns);
         setModel(model);
+        rowSorter = new TableRowSorter<>(model);
+        setRowSorter(rowSorter);
         repaint();
         revalidate();
     }
     
-    public void addItem(String tenVatTu, String loaiVT, String donGiaNhap, String donGiaXuat){
-        controller.themVatTuVaoModel(tenVatTu, loaiVT, donGiaNhap, donGiaXuat);
+    public void addItem(String tenVatTu, String loaiVT, String donGiaNhap){
+        controller.themVatTuVaoModel(tenVatTu, loaiVT, donGiaNhap);
         refresh();
     }
     
@@ -79,9 +81,9 @@ public class VatTuTable extends JTable{
         refresh();
     }
     
-    public void editItem(String tenVatTu, String loaiVT, String donGiaNhap, String donGiaXuat){
+    public void editItem(String tenVatTu, String loaiVT, String donGiaNhap){
         int maVatTu = (Integer) model.getValueAt(getSelectedRow(), 0);
-        controller.capNhatVatTuVaoModel(tenVatTu, loaiVT, donGiaNhap, donGiaXuat,maVatTu);
+        controller.capNhatVatTuVaoModel(tenVatTu, loaiVT, donGiaNhap, maVatTu);
         refresh();
     }
     public Object[] getItemAt(int row){

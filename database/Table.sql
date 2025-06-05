@@ -26,7 +26,8 @@ CREATE TABLE NhanVien (
     ChucVu VARCHAR2(50) NOT NULL,
     TenDangNhap VARCHAR2(50) NOT NULL,
     MatKhau VARCHAR2(50) NOT NULL,
-    CONSTRAINT CK_ChucVu CHECK (ChucVu IN ('KeToan', 'NhapXuat', 'NghiemThu'))
+    Email VARCHAR2(100) NOT NULL,
+    CONSTRAINT CK_ChucVu CHECK (ChucVu IN ('KeToan', 'NhapXuat', 'NghiemThu','Admin'))
 );
 
 -- Tạo bảng NhaVanChuyen

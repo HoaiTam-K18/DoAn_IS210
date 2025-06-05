@@ -40,8 +40,12 @@ public class NhanVienDAO {
         return dsNhanVien;
     }
 
-    public void insertNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu, String email){
-        String query = "INSERT INTO NHANVIEN(TenNV, NgayVaoLam, Luong, ChucVu, Email) VALUES (?,?,?,?,?)";
+    public void insertNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu, String email, String tenDangNhap, String matKhau){
+        if (isEmailExists(email)) {
+            System.out.println("Email already exists.");
+            return; // Hoặc xử lý theo cách khác nếu cần
+        }
+        String query = "INSERT INTO NHANVIEN(TenNV, NgayVaoLam, Luong, ChucVu, Email, TenDangNhap, MatKhau) VALUES (?,?,?,?,?,?,?)";
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, tenNhanVien);
@@ -49,6 +53,8 @@ public class NhanVienDAO {
             stmt.setLong(3, luong);
             stmt.setString(4, chucVu);
             stmt.setString(5, email);
+            stmt.setString(6, tenDangNhap);
+            stmt.setString(7, matKhau);
             stmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -66,9 +72,8 @@ public class NhanVienDAO {
         }
     }
 
-    public void updateNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu, String email, int maNhanVien){
-        String query = "UPDATE NHANVIEN SET TenNV = ?, NgayVaoLam = ?, Luong = ?, ChucVu = ?, Email = ?"
-                         + "WHERE MaNV = ?";
+    public void updateNhanVien(String tenNhanVien, Date ngayVaoLam, long luong, String chucVu, String email, String tenDangNhap, String matKhau, int maNhanVien){
+        String query = "UPDATE NHANVIEN SET TenNV = ?, NgayVaoLam = ?, Luong = ?, ChucVu = ?, Email = ?, TenDangNhap = ?, MatKhau = ? WHERE MaNV = ?";
         try(Connection con = DatabaseConnection.getConnection();
             PreparedStatement stmt = con.prepareStatement(query)){
             stmt.setString(1,tenNhanVien);
@@ -76,7 +81,9 @@ public class NhanVienDAO {
             stmt.setLong(3, luong);
             stmt.setString(4, chucVu);
             stmt.setString(5, email);
-            stmt.setInt(6, maNhanVien);
+            stmt.setString(6, tenDangNhap);
+            stmt.setString(7, matKhau);
+            stmt.setInt(8, maNhanVien);
             stmt.executeUpdate();
         }catch (SQLException e) {
             e.printStackTrace();

@@ -58,6 +58,8 @@ public class GiaoDichTable extends JTable{
         Object[][] data = controller.getGiaoDichFromModel();
         model = new DefaultTableModel(data,columns);
         setModel(model);
+        rowSorter = new TableRowSorter<>(model);
+        setRowSorter(rowSorter);
         repaint();
         revalidate();
     }
