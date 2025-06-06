@@ -13,7 +13,7 @@ import java.util.ArrayList;
 public class NhanVienDAO {
     public ArrayList<NhanVien> getAllNhanVien(){
         ArrayList<NhanVien> dsNhanVien = new ArrayList<>();
-        String query = "SELECT * FROM NHANVIEN";
+        String query = "SELECT * FROM NHANVIEN WHERE DAXOA = 0";
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query)) {
             
@@ -62,7 +62,7 @@ public class NhanVienDAO {
     }
     
     public void deleteNhanVien(int maNhanVien){
-        String query = "DELETE FROM VATTU WHERE MaVT = ?";
+        String query = "UPDATE NHANVIEN SET DAXOA = 1 WHERE MANV = ?";
         try(Connection con = DatabaseConnection.getConnection();
             PreparedStatement stmt = con.prepareStatement(query)){
             stmt.setInt(1,maNhanVien);

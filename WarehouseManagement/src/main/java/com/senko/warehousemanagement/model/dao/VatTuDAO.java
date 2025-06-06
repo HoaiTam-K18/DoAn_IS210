@@ -14,7 +14,8 @@ public class VatTuDAO {
     
     public ArrayList<VatTu> getAllVatTu(){
         ArrayList<VatTu> dsVatTu = new ArrayList<>();
-        String query = "SELECT * FROM VATTU JOIN LOAIVT ON VATTU.MaLVT = LOAIVT.MaLVT";
+        String query = "SELECT * FROM VATTU JOIN LOAIVT ON VATTU.MaLVT = LOAIVT.MaLVT"
+                + " WHERE VATTU.DAXOA = 0";
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query)) {
             
@@ -54,7 +55,7 @@ public class VatTuDAO {
     }
     
     public void deleteVatTu(int maVatTu){
-        String query = "DELETE FROM VATTU WHERE MaVT = ?";
+        String query = "UPDATE VATTU SET DAXOA = 1 WHERE MAVT = ?";
         try(Connection con = DatabaseConnection.getConnection();
             PreparedStatement stmt = con.prepareStatement(query)){
             stmt.setInt(1,maVatTu);
@@ -101,7 +102,7 @@ public class VatTuDAO {
 
     public int getSoLuongTheoTrangThai(int trangThai) {
         int soLuong = 0;
-        String query = "SELECT COUNT(*) FROM VATTU WHERE TrangThai = ?";
+        String query = "SELECT COUNT(*) FROM VATTU WHERE TrangThai = ? AND DAXOA = 0";
 
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {

@@ -35,7 +35,7 @@ public class NhaCungCapDAO {
     
     public ArrayList<NhaCungCap> getAllNhaCungCap(){
         ArrayList<NhaCungCap> dsNhaCungCap = new ArrayList<>();
-        String query = "SELECT * FROM NHACUNGCAP";
+        String query = "SELECT * FROM NHACUNGCAP WHERE DAXOA = 0";
         try (Connection conn = DatabaseConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(query)) {
             
@@ -70,7 +70,7 @@ public class NhaCungCapDAO {
     }
     
     public void deleteNhaCungCap(int maNhaCungCap){
-        String query = "DELETE FROM NHACUNGCAP WHERE MANCC = ?";
+        String query = "UPDATE NHACUNGCAP SET DAXOA = 1 WHERE MANCC = ?";
         try(Connection con = DatabaseConnection.getConnection();
             PreparedStatement stmt = con.prepareStatement(query)){
             stmt.setInt(1,maNhaCungCap);
