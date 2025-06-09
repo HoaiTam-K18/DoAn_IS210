@@ -305,3 +305,367 @@ INSERT INTO VatTu (TenVT, MaLVT, DonGiaNhap, SoLuong, TrangThai) VALUES ('Thùng
 INSERT INTO VatTu (TenVT, MaLVT, DonGiaNhap, SoLuong, TrangThai) VALUES ('Quần áo bảo hộ lao động AV02 1 bộ', 14, 190000, 660, 2);
 INSERT INTO VatTu (TenVT, MaLVT, DonGiaNhap, SoLuong, TrangThai) VALUES ('Áo Parka Chống Tia UV Bỏ Túi NANO Design 1 chiếc', 15, 784000, 310, 1);
 COMMIT;
+
+--Cập nhật đơn giá xuất = đơn giá nhập * 1.2 nếu đơn giá xuất chưa được nhập.
+CREATE OR REPLACE TRIGGER trg_update_export_price
+BEFORE INSERT OR UPDATE
+ON VatTu    
+FOR EACH ROW
+BEGIN
+    -- Kiểm tra và cập nhật DonGiaXuat
+    IF :NEW.DonGiaNhap IS NOT NULL THEN
+        IF :NEW.DonGiaXuat IS NULL OR :NEW.DonGiaXuat <> :NEW.DonGiaNhap * 1.2 THEN
+            :NEW.DonGiaXuat := :NEW.DonGiaNhap * 1.2;
+        END IF;
+    ELSE
+        RAISE_APPLICATION_ERROR(-20001, 'Đơn giá nhập không được NULL');
+    END IF;
+
+    -- Ghi lịch sử cập nhật khi thay đổi DonGiaNhap
+    IF UPDATING AND :OLD.DonGiaNhap != :NEW.DonGiaNhap THEN
+        INSERT INTO LichSuCapNhat (MaVT, GiaCu, GiaMoi)
+        VALUES (:NEW.MaVT, :OLD.DonGiaNhap, :NEW.DonGiaNhap);
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Lỗi trong trigger: ' || SQLERRM);
+END;
+/
+
+--Tự động tính tổng tiền giao dịch dựa trên chi tiết nhập/xuất.
+CREATE OR REPLACE TRIGGER trg_UpdateThanhTien_Xuat
+FOR INSERT OR UPDATE OR DELETE
+ON CT_Xuat
+COMPOUND TRIGGER
+
+    -- Tạo ra mảng lưu trữ giá trị thành tiền.
+    TYPE t_CT_Xuat_ThanhTien IS TABLE OF CT_Xuat.THANHTIEN%TYPE INDEX BY PLS_INTEGER;
+    TYPE t_CT_Xuat_MaGD IS TABLE OF CT_Xuat.MAGD%TYPE INDEX BY PLS_INTEGER;
+
+    v_CT_Xuat_ThanhTien t_CT_Xuat_ThanhTien;
+    v_CT_Xuat_MaGD t_CT_Xuat_MaGD;
+
+    AFTER EACH ROW IS
+    BEGIN
+        IF INSERTING OR UPDATING THEN
+        BEGIN
+            v_CT_Xuat_ThanhTien(v_CT_Xuat_ThanhTien.COUNT + 1) := :NEW.ThanhTien - NVL(:OLD.ThanhTien, 0);
+            v_CT_Xuat_MaGD(v_CT_Xuat_MaGD.COUNT + 1) := :NEW.MaGD;
+        END;
+        ELSIF DELETING THEN
+        BEGIN
+            v_CT_Xuat_ThanhTien(v_CT_Xuat_ThanhTien.COUNT + 1) := :OLD.ThanhTien;
+            v_CT_Xuat_MaGD(v_CT_Xuat_MaGD.COUNT + 1) := :OLD.MaGD;
+        END;
+        END IF;
+    END AFTER EACH ROW;
+
+    AFTER STATEMENT IS
+    BEGIN
+        FOR i IN 1 .. v_CT_Xuat_MaGD.COUNT  
+        LOOP
+            -- Tạo biến tạm.
+            DECLARE v_temp NUMBER;
+            BEGIN
+                -- Lock các row theo MaGD và MaVT
+                SELECT 1 INTO v_temp
+                FROM GIAODICH
+                WHERE MaGD = v_CT_Xuat_MaGD(i) 
+                FOR UPDATE;
+
+                -- Tính Thành Tiền vào Giao Dịch.
+                IF INSERTING OR UPDATING THEN
+                    UPDATE GIAODICH
+                    SET THANHTIEN = THANHTIEN + v_CT_Xuat_ThanhTien(i)
+                    WHERE MaGD = v_CT_Xuat_MaGD(i);
+                ELSIF DELETING THEN
+                    UPDATE GIAODICH
+                    SET THANHTIEN = THANHTIEN - v_CT_Xuat_ThanhTien(i)
+                    WHERE MAGD = v_CT_Xuat_MaGD(i);
+                END IF;
+
+                EXCEPTION 
+                    WHEN NO_DATA_FOUND THEN
+                        DBMS_OUTPUT.PUT_LINE('Không tìm thấy dữ liệu cho MaGD: ' || v_CT_Xuat_MaGD(i));
+                    WHEN TOO_MANY_ROWS THEN
+                        DBMS_OUTPUT.PUT_LINE('Nhiều dòng dữ liệu trùng MaGD: ' || v_CT_Xuat_MaGD(i));
+                    WHEN OTHERS THEN
+                        DBMS_OUTPUT.PUT_LINE('Lỗi khác xảy ra: ' || SQLERRM);
+            END;
+        END LOOP;
+    END AFTER STATEMENT;
+END trg_UpdateThanhTien_Xuat;
+/
+
+CREATE OR REPLACE TRIGGER trg_UpdateThanhTien_Nhap
+FOR INSERT OR UPDATE OR DELETE
+ON CT_Nhap
+COMPOUND TRIGGER
+
+    -- Tạo ra mảng lưu trữ giá trị thành tiền.
+    TYPE t_CT_Nhap_ThanhTien IS TABLE OF CT_Nhap.THANHTIEN%TYPE INDEX BY PLS_INTEGER;
+    TYPE t_CT_Nhap_MaGD IS TABLE OF CT_Nhap.MAGD%TYPE INDEX BY PLS_INTEGER;
+
+    v_CT_Nhap_ThanhTien t_CT_Nhap_ThanhTien;
+    v_CT_Nhap_MaGD t_CT_Nhap_MaGD;
+
+    AFTER EACH ROW IS
+    BEGIN
+        IF INSERTING OR UPDATING THEN
+        BEGIN
+            v_CT_Nhap_ThanhTien(v_CT_Nhap_ThanhTien.COUNT + 1) := :NEW.ThanhTien - NVL(:OLD.ThanhTien, 0);
+            v_CT_Nhap_MaGD(v_CT_Nhap_MaGD.COUNT + 1) := :NEW.MaGD;
+        END;
+        ELSIF DELETING THEN
+        BEGIN
+            v_CT_Nhap_ThanhTien(v_CT_Nhap_ThanhTien.COUNT + 1) := :OLD.ThanhTien;
+            v_CT_Nhap_MaGD(v_CT_Nhap_MaGD.COUNT + 1) := :OLD.MaGD;
+        END;
+        END IF;
+    END AFTER EACH ROW;
+
+    AFTER STATEMENT IS
+    BEGIN
+        FOR i IN 1 .. v_CT_Nhap_MaGD.COUNT  
+        LOOP
+            -- Tạo biến tạm.
+            DECLARE v_temp NUMBER;
+            BEGIN
+                -- Lock các row theo MaGD và MaVT
+                SELECT 1 INTO v_temp
+                FROM GIAODICH
+                WHERE MaGD = v_CT_Nhap_MaGD(i) 
+                FOR UPDATE;
+
+                -- Tính Thành Tiền vào Giao Dịch.
+                IF INSERTING OR UPDATING THEN
+                    UPDATE GIAODICH
+                    SET THANHTIEN = THANHTIEN + v_CT_Nhap_ThanhTien(i)
+                    WHERE MaGD = v_CT_Nhap_MaGD(i);
+                ELSIF DELETING THEN
+                    UPDATE GIAODICH
+                    SET THANHTIEN = THANHTIEN - v_CT_Nhap_ThanhTien(i)
+                    WHERE MAGD = v_CT_Nhap_MaGD(i);
+                END IF;
+
+                EXCEPTION 
+                    WHEN NO_DATA_FOUND THEN
+                        DBMS_OUTPUT.PUT_LINE('Không tìm thấy dữ liệu cho MaGD: ' || v_CT_Nhap_MaGD(i));
+                    WHEN TOO_MANY_ROWS THEN
+                        DBMS_OUTPUT.PUT_LINE('Nhiều dòng dữ liệu trùng MaGD: ' || v_CT_Nhap_MaGD(i));
+                    WHEN OTHERS THEN
+                        DBMS_OUTPUT.PUT_LINE('Lỗi khác xảy ra: ' || SQLERRM);
+            END;
+        END LOOP;
+    END AFTER STATEMENT;
+END trg_UpdateThanhTien_Nhap;
+/
+
+--***3. Trigger trên bảng CT_Nhap
+--Tự động tính tổng tiền cho CT_Nhap
+CREATE OR REPLACE TRIGGER TONGTIEN_CT_NHAP
+BEFORE INSERT OR UPDATE
+ON CT_Nhap
+FOR EACH ROW
+DECLARE 
+    v_DonGiaNhap NUMBER;
+BEGIN
+    SELECT DonGiaNhap 
+    INTO v_DonGiaNhap 
+    FROM VatTu 
+    WHERE MaVT = :NEW.MaVT
+    FOR UPDATE;
+
+    -- Tính ThanhTien trước khi dữ liệu được insert/update vào bảng CT_Nhap
+    :NEW.ThanhTien := :NEW.SL * v_DonGiaNhap;
+    
+    EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20003, 'Không tìm thấy đơn giá nhập cho vật tư ' || :NEW.MaVT);
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Lỗi khi tính tổng tiền CT_Nhap: ' || SQLERRM);
+END;
+/
+
+--***4. Trigger trên bảng CT_Xuat
+--Tự động tính tổng tiền cho CT_Xuat
+CREATE OR REPLACE TRIGGER TONGTIEN_CT_XUAT
+BEFORE INSERT OR UPDATE
+ON CT_Xuat
+FOR EACH ROW
+DECLARE
+    v_DonGiaXuat NUMBER;
+BEGIN
+    -- Lấy đơn giá xuất từ bảng VatTu
+    SELECT DonGiaXuat
+    INTO v_DonGiaXuat
+    FROM VatTu
+    WHERE MaVT = :NEW.MaVT
+    FOR UPDATE;
+
+    -- Gán giá trị ThanhTien trực tiếp
+    :NEW.ThanhTien := :NEW.SL * v_DonGiaXuat;
+
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20003, 'Không tìm thấy đơn giá xuất cho vật tư ' || :NEW.MaVT);
+    WHEN OTHERS THEN
+        RAISE_APPLICATION_ERROR(-20004, 'Lỗi trong trigger TONGTIEN_CT_XUAT: ' || SQLERRM);
+END TONGTIEN_CT_XUAT;
+/
+
+--TRANSACTION NHẬP HÀNG-------------------------------------------------------
+CREATE OR REPLACE PROCEDURE TRANSACTION_NHAP_HANG (
+    MA_VAT_TU IN VARCHAR2,
+    SO_LUONG_NHAP IN NUMBER,
+    MA_NHAN_VIEN IN VARCHAR2,
+    MA_NHA_CUNG_CAP IN VARCHAR2,
+    MA_GIAO_DICH IN VARCHAR2
+)
+IS
+    SO_LUONG_HIEN_CO NUMBER;
+BEGIN
+    -- Lấy số lượng hiện có và khóa dòng
+    SELECT SOLUONG INTO SO_LUONG_HIEN_CO
+    FROM VATTU
+    WHERE MAVT = MA_VAT_TU
+    FOR UPDATE WAIT 5;
+
+    -- Cập nhật số lượng vật tư
+    UPDATE VATTU
+    SET SOLUONG = SO_LUONG_HIEN_CO + SO_LUONG_NHAP
+    WHERE MAVT = MA_VAT_TU;
+
+    -- Thêm giao dịch nhập hàng (nếu cần)
+    INSERT INTO GIAODICH(MAGD, LOAIGD) VALUES(MA_GIAO_DICH, 'NHAP');
+
+    -- Thêm chi tiết nhập hàng
+    INSERT INTO CT_NHAP VALUES(MA_GIAO_DICH, MA_VAT_TU, SO_LUONG_NHAP, MA_NHAN_VIEN, MA_NHA_CUNG_CAP);
+
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE = -60 THEN -- Deadlock
+            RAISE_APPLICATION_ERROR(-20002, 'Deadlock');
+        ELSE
+            RAISE_APPLICATION_ERROR(-20001, SQLERRM);
+        END IF;
+END TRANSACTION_NHAP_HANG;
+/
+
+--TRANSACTION XUẤT HÀNG-------------------------------------------------------
+CREATE OR REPLACE PROCEDURE TRANSACTION_XUAT_HANG (
+    MA_VAT_TU IN VARCHAR2,
+    SO_LUONG_XUAT IN NUMBER,
+    MA_NHAN_VIEN IN VARCHAR2,
+    MA_KHACH_HANG IN VARCHAR2,
+    MA_GIAO_DICH IN VARCHAR2
+)
+IS
+    SO_LUONG_HIEN_CO NUMBER;
+    DON_GIA_XUAT NUMBER;
+    THANH_TIEN NUMBER;
+BEGIN
+    -- Lấy đơn giá xuất và số lượng hiện có, khóa dòng
+    SELECT DONGIAXUAT, SOLUONG INTO DON_GIA_XUAT, SO_LUONG_HIEN_CO
+    FROM VATTU
+    WHERE MAVT = MA_VAT_TU
+    FOR UPDATE WAIT 5;
+
+    -- Kiểm tra đủ số lượng xuất
+    IF SO_LUONG_HIEN_CO < SO_LUONG_XUAT THEN
+        RAISE_APPLICATION_ERROR(-20001, 'Không đủ hàng để xuất');
+    END IF;
+
+    -- Tính thành tiền
+    THANH_TIEN := DON_GIA_XUAT * SO_LUONG_XUAT;
+
+    -- Cập nhật số lượng vật tư
+    UPDATE VATTU
+    SET SOLUONG = SO_LUONG_HIEN_CO - SO_LUONG_XUAT
+    WHERE MAVT = MA_VAT_TU;
+
+    -- Thêm giao dịch xuất hàng (nếu cần)
+    INSERT INTO GIAODICH(MAGD, LOAIGD) VALUES(MA_GIAO_DICH, 'XUAT');
+
+    -- Thêm chi tiết xuất hàng
+    INSERT INTO CT_XUAT VALUES(MA_GIAO_DICH, MA_VAT_TU, SO_LUONG_XUAT, MA_NHAN_VIEN, THANH_TIEN, MA_KHACH_HANG);
+
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE = -60 THEN
+            RAISE_APPLICATION_ERROR(-20002, 'Deadlock');
+        ELSE
+            RAISE_APPLICATION_ERROR(-20003, SQLERRM);
+        END IF;
+END TRANSACTION_XUAT_HANG;
+/
+
+--TRANSACTION THAY ĐỔI GIÁ----------------------------------------------
+CREATE OR REPLACE PROCEDURE TRANSACTION_THAY_DOI_GIA (
+    MA_LICH_SU_CAP_NHAT_GIA IN VARCHAR2,
+    MA_VAT_TU IN VARCHAR2,
+    GIA_MOI IN NUMBER
+)
+IS
+    GIA_CU NUMBER;
+BEGIN
+    -- Lấy giá cũ và khóa dòng
+    SELECT DONGIAXUAT INTO GIA_CU
+    FROM VATTU
+    WHERE MAVT = MA_VAT_TU
+    FOR UPDATE WAIT 5;
+
+    IF GIA_CU != GIA_MOI THEN
+        UPDATE VATTU SET DONGIAXUAT = GIA_MOI WHERE MAVT = MA_VAT_TU;
+        INSERT INTO LICHSUCAPNHAT(MALSCN, MAVT, GIACU, GIAMOI)
+        VALUES(MA_LICH_SU_CAP_NHAT_GIA, MA_VAT_TU, GIA_CU, GIA_MOI);
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE = -60 THEN
+            RAISE_APPLICATION_ERROR(-20004, 'Deadlock');
+        ELSE
+            RAISE_APPLICATION_ERROR(-20005, SQLERRM);
+        END IF;
+END TRANSACTION_THAY_DOI_GIA;
+/
+
+--TRANSACTION KIỂM KÊ SỐ LƯỢNG--------------------------------------------------------
+CREATE OR REPLACE PROCEDURE TRANSACTION_KIEM_KE (
+    MA_LICH_SU_KIEM_KE IN VARCHAR2,
+    MA_NHAN_VIEN IN NUMBER,
+    MA_VAT_TU IN NUMBER,
+    SO_LUONG_KIEM_KE IN NUMBER,
+    TINH_TRANG IN VARCHAR2
+)
+IS
+    SO_LUONG_CON_LAI NUMBER;
+BEGIN
+    -- Lấy số lượng hiện có và khóa dòng
+    SELECT SoLuong INTO SO_LUONG_CON_LAI
+    FROM VATTU
+    WHERE MaVT = MA_VAT_TU
+    FOR UPDATE WAIT 5;
+
+    -- Ghi nhận lịch sử kiểm kê
+    INSERT INTO LichSuKiemKe (MaNV, MaVT, SoLuongConLai, TinhTrang)
+    VALUES (MA_NHAN_VIEN, MA_VAT_TU, SO_LUONG_KIEM_KE, TINH_TRANG);
+
+    -- Nếu có chênh lệch thì cập nhật lại số lượng
+    IF SO_LUONG_CON_LAI != SO_LUONG_KIEM_KE THEN
+        UPDATE VATTU
+        SET SoLuong = SO_LUONG_KIEM_KE
+        WHERE MaVT = MA_VAT_TU;
+    END IF;
+
+EXCEPTION
+    WHEN OTHERS THEN
+        IF SQLCODE = -60 THEN
+            RAISE_APPLICATION_ERROR(-20006, 'Deadlock');
+        ELSE
+            RAISE_APPLICATION_ERROR(-20007, SQLERRM);
+        END IF;
+END TRANSACTION_KIEM_KE;
+/
