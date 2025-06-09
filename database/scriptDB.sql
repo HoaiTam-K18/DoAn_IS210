@@ -673,7 +673,7 @@ commit;
 -- PROCEDURE
 SET SERVEROUTPUT ON;
 --Kiểm tra hàng tồn kho.
-CREATE OR REPLACE PROCEDURE CHECK_INVENTORY (
+CREATE OR REPLACE PROCEDURE proc_Check_Inventory (
     p_MaVT IN NUMBER,
     p_SoLuong OUT NUMBER
 )
@@ -692,37 +692,22 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
         p_SoLuong := -1;
 
-END CHECK_INVENTORY;
+END proc_Check_Inventory;
 /
 
-DECLARE
-    v_soluong NUMBER;
-BEGIN
-    CHECK_INVENTORY(1, v_soluong);
-    DBMS_OUTPUT.PUT_LINE('Số lượng tồn kho: ' || v_soluong);
-END;
-/
+-- DECLARE
+--     v_soluong NUMBER;
+-- BEGIN
+--     CHECK_INVENTORY(1, v_soluong);
+--     DBMS_OUTPUT.PUT_LINE('Số lượng tồn kho: ' || v_soluong);
+-- END;
+-- /
 
-select * from VatTu;
+-- select * from VatTu;
 
--- Tìm kiếm vật tư theo MaVT hoặc tên VT
-CREATE OR REPLACE PROCEDURE Search_VATTU(
-    p_TenVT IN VARCHAR2
-)
-AS
-BEGIN
-    SELECT *
-    FROM VATTU
-    WHERE MaVT LIKE '%' || p_TenVT || '%'
-    OR TenVT LIKE '%' || p_TenVT || '%';
-
-    IF OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Không tồn tại vật tư đó trong kho: ' || SQLERRM);
-    END IF;
-END Search_VATTU;
 
 --Cập nhật thông tin hàng hóa (giá, mô tả, số lượng).
-CREATE OR REPLACE PROCEDURE CAPNHAT_HANGHOA (
+CREATE OR REPLACE PROCEDURE proc_CapNhatHangHoa (
     p_MaVT IN VARCHAR2,
     p_TenVT IN VARCHAR2,
     p_DonGiaNhap IN NUMBER,
@@ -745,11 +730,11 @@ EXCEPTION
         DBMS_OUTPUT.PUT_LINE('Không tìm thấy vật tư với ID: ' || p_MaVT);
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
-END CAPNHAT_HANGHOA;
+END proc_CapNhatHangHoa;
 /
 
 --Xuất báo cáo tồn kho theo từng loại vật tư.
-CREATE OR REPLACE PROCEDURE BAOCAO_TONKHO_LoaiVT
+CREATE OR REPLACE PROCEDURE proc_BaoCaoTonKho_LoaiVT
 AS
 BEGIN
     FOR LVT IN (
@@ -762,7 +747,7 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE('Loại vật tư: ' || LVT.MaLVT || ' - ' || LVT.TenLVT ||
                              ' - Tổng tồn kho: ' || LVT.TongSoLuong);
     END LOOP;
-END BAOCAO_TONKHO_LoaiVT;
+END proc_BaoCaoTonKho_LoaiVT;
 /
 
 
@@ -772,7 +757,7 @@ END BAOCAO_TONKHO_LoaiVT;
 -- /
 
 -- Tính toán và trả về giá trị tổng kho của mỗi loại vật tư.
-CREATE OR REPLACE PROCEDURE ThongKeGiaTriKho
+CREATE OR REPLACE PROCEDURE proc_ThongKeGiaTriKho
 AS
     v_GiaTri NUMBER;
 BEGIN
@@ -782,12 +767,12 @@ BEGIN
     LOOP
         DBMS_OUTPUT.PUT_LINE('Loại vật tư: ' || r.MaLVT || ' - Giá trị kho: ' || r.GiaTri);
     END LOOP;
-END ThongKeGiaTriKho;
+END proc_ThongKeGiaTriKho;
 /
 
 
 -- Lấy ra giá trị số lượng tồn kho theo MaVT
-CREATE OR REPLACE PROCEDURE Get_SLTonKho(
+CREATE OR REPLACE PROCEDURE proc_Get_SLTonKho(
     P_MaVT IN NUMBER,
     P_SoLuong OUT NUMBER    
 )
@@ -799,11 +784,11 @@ BEGIN
             DBMS_OUTPUT.PUT_LINE('Không tìm thấy số lượng vật tư với ID: ' || p_MaVT);
         WHEN OTHERS THEN
             DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
-END Get_SLTonKho;
+END proc_Get_SLTonKho;
 /
 
 -- Báo cáo Nhập/Xuất Kho theo ngày.
-CREATE OR REPLACE PROCEDURE BaoCaoNhapXuatTheoNgay(
+CREATE OR REPLACE PROCEDURE proc_BaoCaoNhapXuatTheoNgay(
     P_Ngay IN DATE
 )
 AS
@@ -827,106 +812,13 @@ BEGIN
     LOOP
         DBMS_OUTPUT.PUT_LINE('Giao dịch xuất: ' || r.MaGD || ' - Số lượng: ' || r.SL_Xuat || ' - Thành tiền: ' || r.ThanhTien_Xuat);
     END LOOP;
-END BaoCaoNhapXuatTheoNgay;
+END proc_BaoCaoNhapXuatTheoNgay;
 /
 
-
--- Tạo Giao Dịch Nhập, Trả lại MaGD để thêm CT_Nhap
-CREATE OR REPLACE PROCEDURE Proc_TaoGiaoDichNhap (
-    p_MaNVC    IN NUMBER,
-    p_MaGD     OUT NUMBER
-) AS
-BEGIN
-    INSERT INTO GiaoDich (LoaiGD, MaNVC)
-    VALUES ('Nhap', p_MaNVC)
-    RETURNING MaGD INTO p_MaGD;
-END;
-/
-
-
--- Thêm CT_Nhap 
--- CREATE OR REPLACE PROCEDURE Them_CT_Nhap(
---     P_MaGD IN NUMBER,
---     P_MaVT IN NUMBER,
---     P_SL IN NUMBER,
---     P_MaNV IN NUMBER,
---     P_MaNCC IN NUMBER
--- )
--- AS
---     dummy NUMBER;
--- BEGIN
---     SELECT 1 INTO dummy
---     FROM VATTU
---     WHERE MAVT = P_MaVT
---     FOR UPDATE;
-
---     INSERT INTO CT_Nhap(MaGD, MaVT, SL, MaNV, ThanhTien, MaNCC) 
---     VALUES(P_MaGD, P_MaVT, P_SL, P_MaNV, 0, P_MaNCC);
---     COMMIT;
-
---     EXCEPTION
---         WHEN OTHERS THEN
---             DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
---             ROLLBACK;
--- END Them_CT_Nhap;
--- /
-
--- DECLARE
---     v_MaGD NUMBER;
--- BEGIN
---     Proc_TaoGiaoDichNhap(p_MaNVC => 1, p_MaGD => v_MaGD);
-
---     -- 2. Thêm nhiều chi tiết nhập cho giao dịch đó
---     Proc_ThemChiTietNhap(v_MaGD, 1, 10, 2, 3);
---     Proc_ThemChiTietNhap(v_MaGD, 2, 5, 2, 3);
---     Proc_ThemChiTietNhap(v_MaGD, 3, 20, 2, 3);
--- END;
--- /
-
-
--- Tạo Giao Dịch Xuất, Trả lại MaGD để thêm CT_Xuat
-CREATE OR REPLACE PROCEDURE Proc_TaoGiaoDichXuat (
-    p_MaNVC    IN NUMBER,
-    p_MaGD     OUT NUMBER
-) AS
-BEGIN
-    INSERT INTO GiaoDich (LoaiGD, MaNVC)
-    VALUES ('Xuat', p_MaNVC)
-    RETURNING MaGD INTO p_MaGD;
-END;
-/
-
-
--- Thêm CT_Xuat
--- CREATE OR REPLACE PROCEDURE Them_CT_Xuat(
---     P_MaGD IN NUMBER,
---     P_MaVT IN NUMBER,
---     P_SL IN NUMBER,
---     P_MaNV IN NUMBER,
---     p_MaKH IN NUMBER
--- )
--- AS
---     dummy NUMBER;
--- BEGIN
---     SELECT 1 INTO dummy
---     FROM VATTU
---     WHERE MAVT = P_MaVT
---     FOR UPDATE;
-
---     INSERT INTO CT_Xuat(MaGD, MaVT, SL, MaNV, ThanhTien, MaKH) 
---     VALUES(P_MaGD, P_MaVT, P_SL, P_MaNV, 0, p_MaKH);
-   
---     COMMIT;
---     EXCEPTION
---         WHEN OTHERS THEN
---             DBMS_OUTPUT.PUT_LINE('Lỗi xảy ra: ' || SQLERRM);
---             ROLLBACK;
--- END Them_CT_Xuat;
--- /
 
 
 --Truy vấn lịch sử nhập/xuất vật tư.
-CREATE OR REPLACE PROCEDURE LICH_SU_NHAP(
+CREATE OR REPLACE PROCEDURE proc_LichSuGiaoDich(
     p_MaGD IN VARCHAR2
 )
 AS
@@ -945,14 +837,28 @@ BEGIN
             ' - Thành tiền: ' || GD_Nhap.ThanhTien || ' | Vật tư: ' || GD_Nhap.MaVT || ' | Số lượng: ' || GD_Nhap.SL || ' | Nhân viên: ' || GD_Nhap.MaNV ||
             ' | Nhà Cung Cấp: ' || GD_Nhap.MaNCC);
         END LOOP;
+    ELSIF v_LoaiGD = 'Xuat' THEN
+        FOR GD_Xuat IN (
+        SELECT GiaoDich.MaGD, LoaiGD, ThoiGian, MaVT, CT_Xuat.ThanhTien, SL, MaNV, MaKH
+        FROM GiaoDich JOIN CT_Xuat 
+        ON GiaoDich.MaGD = CT_Xuat.MaGD
+        WHERE GiaoDich.MaGD = p_MaGD
+        )
+        LOOP
+            DBMS_OUTPUT.PUT_LINE('Giao dịch: ' || GD_Xuat.MaGD || ' - Loại giao dịch: ' || GD_Xuat.LoaiGD  || ' - Ngày giao dịch: ' || GD_Xuat.ThoiGian ||
+                                 ' | Vật tư: ' || GD_Xuat.MaVT || ' | Số lượng: ' || GD_Xuat.SL || ' | Nhân viên: ' || GD_Xuat.MaNV || ' | khách Hàng: ' || GD_Xuat.MaKH);
+        END LOOP;
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Không tìm thấy giao dịch có mã: ' || p_MaGD);
     END IF;
     
-END LICH_SU_NHAP;
+END proc_LichSuGiaoDich;
 /
 
 -- Xoá Giao Dịch và các Chi tiết liên quan.
-CREATE OR REPLACE PROCEDURE XoaGiaoDich(
+CREATE OR REPLACE PROCEDURE proc_Delete_GiaoDich(
     P_MaGD IN NUMBER
+)
 AS
     v_LoaiGD GIAODICH.LOAIGD%TYPE;
 BEGIN
@@ -984,7 +890,7 @@ EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Lỗi: ' || SQLERRM);
         ROLLBACK;
-END XoaGiaoDich;
+END proc_Delete_GiaoDich;
 /
 
 -- BEGIN
@@ -992,36 +898,25 @@ END XoaGiaoDich;
 -- END;
 -- /
 
-
-
-CREATE OR REPLACE PROCEDURE LICH_SU_XUAT(
-    p_MaGD IN VARCHAR2
+-- Tìm kiếm vật tư theo MaVT hoặc tên VT
+CREATE OR REPLACE PROCEDURE proc_Search_VatTu(
+    p_TenVT IN VARCHAR2
 )
 AS
-     v_LoaiGD VARCHAR2(10);
 BEGIN
-    SELECT LoaiGD INTO v_LoaiGD FROM GiaoDich WHERE MaGD = p_MaGD;
-    IF v_LoaiGD = 'Xuat' THEN
-        FOR GD_Xuat IN (
-        SELECT GiaoDich.MaGD, LoaiGD, ThoiGian, MaVT, CT_Xuat.ThanhTien, SL, MaNV, MaKH
-        FROM GiaoDich JOIN CT_Xuat 
-        ON GiaoDich.MaGD = CT_Xuat.MaGD
-        WHERE GiaoDich.MaGD = p_MaGD
-        )
-        LOOP
-            DBMS_OUTPUT.PUT_LINE('Giao dịch: ' || GD_Xuat.MaGD || ' - Loại giao dịch: ' || GD_Xuat.LoaiGD  || ' - Ngày giao dịch: ' || GD_Xuat.ThoiGian ||
-                                 ' | Vật tư: ' || GD_Xuat.MaVT || ' | Số lượng: ' || GD_Xuat.SL || ' | Nhân viên: ' || GD_Xuat.MaNV || ' | khách Hàng: ' || GD_Xuat.MaKH);
-        END LOOP;
-        ELSE
-            DBMS_OUTPUT.PUT_LINE('Không tìm thấy giao dịch có mã: ' || p_MaGD);
+    SELECT *
+    FROM VATTU
+    WHERE MaVT LIKE '%' || p_TenVT || '%'
+    OR TenVT LIKE '%' || p_TenVT || '%';
+
+    IF OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Không tồn tại vật tư đó trong kho: ' || SQLERRM);
     END IF;
-    
-END LICH_SU_XUAT;
-/
+END proc_Search_VatTu;
 
 
 --Tạo tài khoản người dùng mới trong hệ thống.
-CREATE OR REPLACE PROCEDURE CREATE_USER(
+CREATE OR REPLACE PROCEDURE proc_Create_User(
     p_TenNguoiDung IN VARCHAR2,
     p_MatKhau IN VARCHAR2,
     p_VaiTro IN VARCHAR2
@@ -1059,7 +954,7 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN
         DBMS_OUTPUT.PUT_LINE('Lỗi khi tạo tài khoản: ' || SQLERRM);
-END CREATE_USER;
+END proc_Create_User;
 /
 
 --BEGIN
@@ -1068,7 +963,7 @@ END CREATE_USER;
 --/
 
 -- Thêm quyền cho các nhân viên:
-CREATE OR REPLACE PROCEDURE ThemQuyenNV(
+CREATE OR REPLACE PROCEDURE proc_ThemQuyenNV(
     p_MaNV IN VARCHAR2,
     p_TenNguoiDung IN VARCHAR2,
     p_MatKhau IN VARCHAR2
@@ -1107,7 +1002,7 @@ BEGIN
             EXECUTE IMMEDIATE 'GRANT SELECT, INSERT, UPDATE ON VatTu TO ' || p_TenNguoiDung;
         END IF;
     END IF;
-END;
+END proc_ThemQuyenNV;
 /
 
 
