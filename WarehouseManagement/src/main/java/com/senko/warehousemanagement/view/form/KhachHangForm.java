@@ -76,6 +76,14 @@ public class KhachHangForm extends javax.swing.JPanel {
             
         });
         
+        searchBar1.getSearchButton().addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchBar1.getSearchField().setText("");
+            }
+            
+        });
+        
         functionBar2.getThemButton().addActionListener(new ActionListener(){
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -135,6 +143,14 @@ public class KhachHangForm extends javax.swing.JPanel {
             @Override
             public void removeUpdate(DocumentEvent e) {
                nhaCungCapTable1.filter(searchBar2.getSearchField().getText());
+            }
+            
+        });
+        
+        searchBar2.getSearchButton().addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                searchBar2.getSearchField().setText("");
             }
             
         });
