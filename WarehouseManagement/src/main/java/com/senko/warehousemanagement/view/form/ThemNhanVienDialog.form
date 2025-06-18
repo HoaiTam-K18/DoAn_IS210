@@ -26,21 +26,21 @@
           <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
           <Group type="102" attributes="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" pref="214" max="-2" attributes="0"/>
+                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="nameTextField" alignment="0" max="32767" attributes="0"/>
                           <Component id="dateTextField" alignment="0" pref="424" max="32767" attributes="0"/>
                           <Component id="salaryTextField" alignment="0" max="32767" attributes="0"/>
-                          <Component id="positionTextField" alignment="0" max="32767" attributes="0"/>
                           <Component id="emailField" max="32767" attributes="0"/>
                           <Component id="usernameField" alignment="1" max="32767" attributes="0"/>
                           <Component id="passwordField" alignment="0" max="32767" attributes="0"/>
+                          <Component id="chucVuComboBox" max="32767" attributes="0"/>
                       </Group>
-                  </Group>
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="214" max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
               <EmptySpace pref="42" max="32767" attributes="0"/>
@@ -59,7 +59,7 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="salaryTextField" min="-2" pref="32" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="positionTextField" min="-2" pref="33" max="-2" attributes="0"/>
+              <Component id="chucVuComboBox" min="-2" pref="33" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="emailField" min="-2" pref="33" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -98,11 +98,6 @@
         <Property name="text" type="java.lang.String" value="L&#x1b0;&#x1a1;ng"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="positionTextField">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Ch&#x1ee9;c v&#x1ee5;"/>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JButton" name="jButton1">
       <Properties>
         <Property name="text" type="java.lang.String" value="OK"/>
@@ -122,6 +117,16 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="M&#x1ead;t kh&#x1ea9;u"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JComboBox" name="chucVuComboBox">
+      <Properties>
+        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+          <StringArray count="0"/>
+        </Property>
+      </Properties>
+      <AuxValues>
+        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+      </AuxValues>
     </Component>
   </SubComponents>
 </Form>

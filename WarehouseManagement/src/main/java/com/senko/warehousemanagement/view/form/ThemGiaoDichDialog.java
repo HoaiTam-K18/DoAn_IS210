@@ -1,4 +1,3 @@
-
 package com.senko.warehousemanagement.view.form;
 
 import com.senko.warehousemanagement.view.stuff.GiaoDichTable;
@@ -18,6 +17,10 @@ public class ThemGiaoDichDialog extends javax.swing.JDialog {
     
     public void setEdit(boolean isEdit){
         this.isEdit = isEdit;
+        // Khóa combobox nếu là sửa
+        if (jComboBox1 != null) {
+            jComboBox1.setEnabled(!isEdit);
+        }
     }
     
     public ThemGiaoDichDialog(java.awt.Frame parent, boolean modal) {
@@ -61,6 +64,8 @@ public class ThemGiaoDichDialog extends javax.swing.JDialog {
     public void initEditFrame(){
         Object[] obj = table.getItemAt(table.getRow());
         jComboBox1.setSelectedItem((String)obj[1]);
+        // Khóa combobox khi sửa (phòng trường hợp setEdit chưa được gọi)
+        jComboBox1.setEnabled(false);
         this.nhaVanChuyenField.setText((String)obj[4]);
         nhanVienField.setText((String)obj[5]);
     }

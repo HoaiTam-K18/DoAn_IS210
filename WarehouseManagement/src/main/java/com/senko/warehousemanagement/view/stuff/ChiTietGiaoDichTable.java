@@ -34,6 +34,10 @@ public class ChiTietGiaoDichTable extends JTable {
         this.loaiGiaoDich = loaiGiaoDich;
     }
     
+    public String getLoaiGiaoDich(){
+        return loaiGiaoDich;
+    }
+    
     String[] columns = {"Vật tư","Số lượng","Thành tiền", "Nhà cung cấp"};
     String[] columnsXuat = {"Vật tư","Số lượng","Thành tiền", "Khách hàng"};
     

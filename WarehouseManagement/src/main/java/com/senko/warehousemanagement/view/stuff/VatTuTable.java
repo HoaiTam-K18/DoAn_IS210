@@ -1,6 +1,6 @@
-    
 package com.senko.warehousemanagement.view.stuff;
 import com.senko.warehousemanagement.controller.VatTuController;
+import com.senko.warehousemanagement.model.entities.VatTu;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.Arrays;
@@ -19,6 +19,7 @@ public class VatTuTable extends JTable{
     Object[][] data = controller.getVatTuFromModel();
     
     String[] columns = {"Mã vật tư","Tên vật tư","Mã loại vật tư","Đơn giá nhập","Đơn giá xuát","Số lượng","Trạng thái"};
+    private Object[][] originalData; // Lưu dữ liệu gốc khi load bảng
     
     public VatTuTable(){
         model = new DefaultTableModel(data, columns);
@@ -27,6 +28,8 @@ public class VatTuTable extends JTable{
         setRowSorter(rowSorter);
         setShowHorizontalLines(true);
         setRowHeight(30);
+        // Lưu dữ liệu gốc khi khởi tạo
+        saveOriginalData();
         getTableHeader().setReorderingAllowed(false);
         getTableHeader().setDefaultRenderer(new DefaultTableCellRenderer(){
             @Override
@@ -68,6 +71,20 @@ public class VatTuTable extends JTable{
         setRowSorter(rowSorter);
         repaint();
         revalidate();
+        // Lưu lại dữ liệu gốc mỗi lần refresh
+        saveOriginalData();
+    }
+    
+    // Lưu dữ liệu gốc từ model vào originalData
+    private void saveOriginalData() {
+        int rowCount = model.getRowCount();
+        int colCount = model.getColumnCount();
+        originalData = new Object[rowCount][colCount];
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 0; j < colCount; j++) {
+                originalData[i][j] = model.getValueAt(i, j);
+            }
+        }
     }
     
     public void addItem(String tenVatTu, String loaiVT, String donGiaNhap){
@@ -82,7 +99,40 @@ public class VatTuTable extends JTable{
     }
     
     public void editItem(String tenVatTu, String loaiVT, String donGiaNhap){
-        int maVatTu = (Integer) model.getValueAt(getSelectedRow(), 0);
+        int selectedRow = getSelectedRow();
+        int maVatTu = (Integer) model.getValueAt(selectedRow, 0);
+
+        // Tìm dòng tương ứng trong originalData
+        Object[] originalRow = null;
+        for (Object[] row : originalData) {
+            if (row[0].equals(maVatTu)) {
+                originalRow = row;
+                break;
+            }
+        }
+
+        // Lấy dữ liệu hiện tại từ database
+        VatTu vatTuDB = controller.getVatTuById(maVatTu);
+        if (vatTuDB != null && originalRow != null) {
+            // So sánh dữ liệu gốc trên bảng với dữ liệu hiện tại trong DB
+            String tenVatTuDB = vatTuDB.getTenVatTu();
+            String loaiVTDB = vatTuDB.getLoaiVT();
+            String donGiaNhapDB = String.valueOf(vatTuDB.getDonGiaNhap());
+
+            String tenVatTuOriginal = String.valueOf(originalRow[1]);
+            String loaiVTOriginal = String.valueOf(originalRow[2]);
+            String donGiaNhapOriginal = String.valueOf(originalRow[3]);
+
+            // Nếu dữ liệu gốc trên bảng khác DB => đã có ai đó cập nhật, báo lỗi
+            if (!tenVatTuOriginal.equals(tenVatTuDB) ||
+                !loaiVTOriginal.equals(loaiVTDB) ||
+                !donGiaNhapOriginal.equals(donGiaNhapDB)) {
+                JOptionPane.showMessageDialog(this, "Dữ liệu vật tư đã bị thay đổi bởi cửa sổ khác. Vui lòng tải lại bảng!", "Lỗi đồng bộ dữ liệu", JOptionPane.ERROR_MESSAGE);
+                refresh();
+                return;
+            }
+        }
+        // Cho phép cập nhật vì dữ liệu đồng bộ
         controller.capNhatVatTuVaoModel(tenVatTu, loaiVT, donGiaNhap, maVatTu);
         refresh();
     }

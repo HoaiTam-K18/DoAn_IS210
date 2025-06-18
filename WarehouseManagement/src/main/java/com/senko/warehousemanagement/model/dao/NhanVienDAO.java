@@ -1,4 +1,3 @@
-
 package com.senko.warehousemanagement.model.dao;
 
 import com.senko.warehousemanagement.model.DatabaseConnection;
@@ -167,5 +166,28 @@ public class NhanVienDAO {
         }
     }
 
-    
+    public NhanVien getNhanVienById(int maNhanVien) {
+        NhanVien nhanVien = null;
+        String query = "SELECT * FROM NHANVIEN WHERE MANV = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, maNhanVien);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                nhanVien = new NhanVien(
+                    rs.getInt("MaNV"),
+                    rs.getString("TenNV"),
+                    rs.getDate("NgayVaoLam").toLocalDate(),
+                    rs.getLong("Luong"),
+                    rs.getString("ChucVu"),
+                    rs.getString("TenDangNhap"),
+                    rs.getString("MatKhau"),
+                    rs.getString("Email")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return nhanVien;
+    }
 }

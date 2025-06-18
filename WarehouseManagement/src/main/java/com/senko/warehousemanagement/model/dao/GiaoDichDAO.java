@@ -1,4 +1,3 @@
-
 package com.senko.warehousemanagement.model.dao;
 
 import com.senko.warehousemanagement.model.DatabaseConnection;
@@ -90,5 +89,31 @@ public class GiaoDichDAO {
             e.printStackTrace();
         }
         return 0;
+    }
+    
+    public GiaoDich getGiaoDichById(int maGiaoDich) {
+        GiaoDich giaoDich = null;
+        String query = "SELECT GIAODICH.*, NHAVANCHUYEN.TenNVC, NHANVIEN.TenNV FROM GIAODICH " +
+                       "JOIN NHAVANCHUYEN ON GIAODICH.MaNVC = NHAVANCHUYEN.MaNVC " +
+                       "JOIN NHANVIEN ON GIAODICH.MaNV = NHANVIEN.MaNV " +
+                       "WHERE GIAODICH.MaGD = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, maGiaoDich);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                giaoDich = new GiaoDich(
+                    rs.getInt("MaGD"),
+                    rs.getString("LoaiGD"),
+                    rs.getDate("ThoiGian").toLocalDate(),
+                    rs.getLong("ThanhTien"),
+                    rs.getString("TenNVC"),
+                    rs.getString("TenNV")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return giaoDich;
     }
 }

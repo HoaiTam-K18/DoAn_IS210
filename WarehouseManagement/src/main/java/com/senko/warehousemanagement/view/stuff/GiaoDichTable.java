@@ -1,4 +1,3 @@
-
 package com.senko.warehousemanagement.view.stuff;
 
 import com.senko.warehousemanagement.controller.GiaoDichController;
@@ -21,6 +20,8 @@ public class GiaoDichTable extends JTable{
     
     String[] columns = {"Mã giao dịch","Loại giao dịch","Thời gian","Thành tiền","Nhà vận chuyển","Nhân viên"};
     
+    private Object[][] originalData; // Lưu dữ liệu gốc khi load bảng
+
     public GiaoDichTable(){
         model = new DefaultTableModel(data, columns);
         this.setModel(model);
@@ -52,6 +53,7 @@ public class GiaoDichTable extends JTable{
             }
             
         });
+        saveOriginalData();
     }
     
     public void refresh(){
@@ -62,8 +64,20 @@ public class GiaoDichTable extends JTable{
         setRowSorter(rowSorter);
         repaint();
         revalidate();
+        saveOriginalData();
     }
-    
+
+    private void saveOriginalData() {
+        int rowCount = model.getRowCount();
+        int colCount = model.getColumnCount();
+        originalData = new Object[rowCount][colCount];
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 0; j < colCount; j++) {
+                originalData[i][j] = model.getValueAt(i, j);
+            }
+        }
+    }
+
     public void addItem(String loaiGiaoDich,  String nhaVanChuyen, String nhanVien){
         controller.themGiaoDichVaoModel(loaiGiaoDich, nhaVanChuyen, nhanVien);
         refresh();
@@ -75,8 +89,38 @@ public class GiaoDichTable extends JTable{
         refresh();
     }
     
-    public void editItem(String loaiGiaoDich,  String nhaVanChuyen, String nhanVien){
-        int maGiaoDich= (Integer) model.getValueAt(getSelectedRow(), 0);
+    public void editItem(String loaiGiaoDich, String nhaVanChuyen, String nhanVien){
+        int selectedRow = getSelectedRow();
+        int maGiaoDich = (Integer) model.getValueAt(selectedRow, 0);
+
+        // Tìm dòng tương ứng trong originalData
+        Object[] originalRow = null;
+        for (Object[] row : originalData) {
+            if (row[0].equals(maGiaoDich)) {
+                originalRow = row;
+                break;
+            }
+        }
+
+        // Lấy dữ liệu hiện tại từ database
+        com.senko.warehousemanagement.model.entities.GiaoDich gdDB = controller.getGiaoDichById(maGiaoDich);
+        if (gdDB != null && originalRow != null) {
+            String loaiGDDB = gdDB.getLoaiGiaoDich();
+            String nhaVanChuyenDB = gdDB.getNhaVanChuyen();
+            String nhanVienDB = gdDB.getNhanVien();
+
+            String loaiGDOriginal = String.valueOf(originalRow[1]);
+            String nhaVanChuyenOriginal = String.valueOf(originalRow[4]);
+            String nhanVienOriginal = String.valueOf(originalRow[5]);
+
+            if (!loaiGDOriginal.equals(loaiGDDB) ||
+                !nhaVanChuyenOriginal.equals(nhaVanChuyenDB) ||
+                !nhanVienOriginal.equals(nhanVienDB)) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Dữ liệu giao dịch đã bị thay đổi bởi cửa sổ khác. Vui lòng tải lại bảng!", "Lỗi đồng bộ dữ liệu", javax.swing.JOptionPane.ERROR_MESSAGE);
+                refresh();
+                return;
+            }
+        }
         controller.capNhatGiaoDichVaoModel(loaiGiaoDich, nhaVanChuyen, nhanVien, maGiaoDich);
         refresh();
     }
