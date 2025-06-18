@@ -1,13 +1,20 @@
-
 package com.senko.warehousemanagement.view.form;
 
 import com.senko.warehousemanagement.view.stuff.GiaoDichTable;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileWriter;
+import java.io.IOException;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 public class ChiTietGiaoDichForm extends javax.swing.JDialog {
     private GiaoDichTable table;
+    private JButton exportButton; // Add export button
     
     public void setTable(GiaoDichTable table){
         this.table = table;
@@ -66,6 +73,13 @@ public class ChiTietGiaoDichForm extends javax.swing.JDialog {
 
         jLabel2.setText("Nhân viên:");
 
+        exportButton = new JButton("Xuất hóa đơn");
+        exportButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportInvoiceToFile();
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -79,6 +93,8 @@ public class ChiTietGiaoDichForm extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(maGiaoDichField)
                     .addComponent(nhanVienField, javax.swing.GroupLayout.DEFAULT_SIZE, 577, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(exportButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE) // Add button to layout
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -87,7 +103,8 @@ public class ChiTietGiaoDichForm extends javax.swing.JDialog {
                 .addGap(14, 14, 14)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(maGiaoDichField, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(exportButton, javax.swing.GroupLayout.DEFAULT_SIZE, 33, Short.MAX_VALUE)) // Add button to layout
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -191,4 +208,71 @@ public class ChiTietGiaoDichForm extends javax.swing.JDialog {
     private javax.swing.JTextField nhanVienField;
     private javax.swing.JPanel tablePanel;
     // End of variables declaration//GEN-END:variables
+
+    private void exportInvoiceToFile() {
+        // Gather transaction info
+        String maGiaoDich = maGiaoDichField.getText();
+        String nhanVien = nhanVienField.getText();
+        String loaiGiaoDich = chiTietHoaDonTable1.getLoaiGiaoDich();
+        javax.swing.table.TableModel tableModel = chiTietHoaDonTable1.getModel();
+
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn nơi lưu hóa đơn");
+        fileChooser.setSelectedFile(new java.io.File("HoaDon_" + maGiaoDich + ".xlsx"));
+        int userSelection = fileChooser.showSaveDialog(this);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            java.io.File fileToSave = fileChooser.getSelectedFile();
+            try (Workbook workbook = new XSSFWorkbook()) {
+                Sheet sheet = workbook.createSheet("Hóa đơn");
+
+                int rowIdx = 0;
+                // Tiêu đề
+                Row titleRow = sheet.createRow(rowIdx++);
+                titleRow.createCell(0).setCellValue("HÓA ĐƠN GIAO DỊCH");
+
+                // Thông tin giao dịch
+                Row infoRow1 = sheet.createRow(rowIdx++);
+                infoRow1.createCell(0).setCellValue("Mã giao dịch:");
+                infoRow1.createCell(1).setCellValue(maGiaoDich);
+
+                Row infoRow2 = sheet.createRow(rowIdx++);
+                infoRow2.createCell(0).setCellValue("Loại giao dịch:");
+                infoRow2.createCell(1).setCellValue(loaiGiaoDich);
+
+                Row infoRow3 = sheet.createRow(rowIdx++);
+                infoRow3.createCell(0).setCellValue("Nhân viên:");
+                infoRow3.createCell(1).setCellValue(nhanVien);
+
+                rowIdx++; // Dòng trống
+
+                // Header
+                Row headerRow = sheet.createRow(rowIdx++);
+                for (int i = 0; i < tableModel.getColumnCount(); i++) {
+                    headerRow.createCell(i).setCellValue(tableModel.getColumnName(i));
+                }
+
+                // Data rows
+                for (int i = 0; i < tableModel.getRowCount(); i++) {
+                    Row row = sheet.createRow(rowIdx++);
+                    for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                        Object val = tableModel.getValueAt(i, j);
+                        row.createCell(j).setCellValue(val == null ? "" : val.toString());
+                    }
+                }
+
+                // Auto-size columns
+                for (int i = 0; i < tableModel.getColumnCount(); i++) {
+                    sheet.autoSizeColumn(i);
+                }
+
+                // Ghi file
+                try (java.io.FileOutputStream fos = new java.io.FileOutputStream(fileToSave)) {
+                    workbook.write(fos);
+                }
+                JOptionPane.showMessageDialog(this, "Xuất hóa đơn Excel thành công!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(this, "Lỗi khi lưu file: " + ex.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 }

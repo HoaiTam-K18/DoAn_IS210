@@ -1,4 +1,3 @@
-
 package com.senko.warehousemanagement.controller;
 
 import com.senko.warehousemanagement.model.dao.NhanVienDAO;
@@ -97,5 +96,9 @@ public class NhanVienController {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public com.senko.warehousemanagement.model.entities.NhanVien getNhanVienById(int maNhanVien) {
+        return model.getNhanVienById(maNhanVien);
     }
 }

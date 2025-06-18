@@ -1,4 +1,3 @@
-
 package com.senko.warehousemanagement.controller;
 
 import com.senko.warehousemanagement.model.dao.LichSuCapNhatGiaDAO;
@@ -99,6 +98,10 @@ public class VatTuController {
                 throw new IllegalArgumentException("Trang thai khong hop le: " + trangThai);
         }
         return model.getSoLuongTheoTrangThai(trangThaiInt);
+    }
+
+    public VatTu getVatTuById(int maVatTu) {
+        return model.getVatTuById(maVatTu);
     }
 }
 

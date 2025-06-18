@@ -1,4 +1,3 @@
-
 package com.senko.warehousemanagement.controller;
 
 import com.senko.warehousemanagement.model.dao.GiaoDichDAO;
@@ -81,5 +80,9 @@ public class GiaoDichController {
 
     public int getSoLuongTheoLoaiGiaoDich(String loaiGiaoDich) {
         return model.getQuantityByType(loaiGiaoDich);
+    }
+
+    public com.senko.warehousemanagement.model.entities.GiaoDich getGiaoDichById(int maGiaoDich) {
+        return model.getGiaoDichById(maGiaoDich);
     }
 }

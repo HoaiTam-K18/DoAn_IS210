@@ -1,6 +1,7 @@
 
 package com.senko.warehousemanagement.controller;
 
+import com.senko.warehousemanagement.model.dao.KhachHangDAO;
 import com.senko.warehousemanagement.model.dao.LoaiVatTuDAO;
 import com.senko.warehousemanagement.model.dao.NhaCungCapDAO;
 import com.senko.warehousemanagement.model.entities.LoaiVatTu;
@@ -9,6 +10,10 @@ import java.util.ArrayList;
 
 public class NhaCungCapController {
     private NhaCungCapDAO model;
+    
+    public NhaCungCapDAO getModel(){
+        return model;
+    }
     
     public NhaCungCapController(){
         model = new NhaCungCapDAO();

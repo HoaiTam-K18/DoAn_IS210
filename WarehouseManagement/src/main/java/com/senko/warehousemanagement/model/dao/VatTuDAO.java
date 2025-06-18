@@ -1,4 +1,3 @@
-
 package com.senko.warehousemanagement.model.dao;
 
 import com.senko.warehousemanagement.model.DatabaseConnection;
@@ -119,6 +118,30 @@ public class VatTuDAO {
         }
 
         return soLuong;
+    }
+
+    public VatTu getVatTuById(int maVatTu) {
+        VatTu vatTu = null;
+        String query = "SELECT VATTU.*, LOAIVT.TenLVT FROM VATTU JOIN LOAIVT ON VATTU.MaLVT = LOAIVT.MaLVT WHERE VATTU.MaVT = ? AND VATTU.DAXOA = 0";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, maVatTu);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                vatTu = new VatTu(
+                    rs.getInt("MaVT"),
+                    rs.getString("TenVT"),
+                    rs.getString("TenLVT"),
+                    rs.getLong("DonGiaNhap"),
+                    rs.getLong("DonGiaXuat"),
+                    rs.getInt("SoLuong"),
+                    rs.getInt("TrangThai")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return vatTu;
     }
 }
 

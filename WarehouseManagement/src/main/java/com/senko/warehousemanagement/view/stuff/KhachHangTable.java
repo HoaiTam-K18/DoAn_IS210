@@ -1,4 +1,3 @@
-
 package com.senko.warehousemanagement.view.stuff;
 import com.senko.warehousemanagement.controller.KhachHangController;
 import java.awt.Color;
@@ -20,6 +19,8 @@ public class KhachHangTable extends JTable{
     
     String[] columns = {"Mã khách hàng","Tên khách hàng","Số điện thoại"};
     
+    private Object[][] originalData; // Lưu dữ liệu gốc khi load bảng
+
     public KhachHangTable(){
         model = new DefaultTableModel(data, columns);
         this.setModel(model);
@@ -58,6 +59,7 @@ public class KhachHangTable extends JTable{
             }
             
         });
+        saveOriginalData();
     }
     
     public void refresh(){
@@ -68,8 +70,20 @@ public class KhachHangTable extends JTable{
         setRowSorter(rowSorter);
         repaint();
         revalidate();
+        saveOriginalData();
     }
-    
+
+    private void saveOriginalData() {
+        int rowCount = model.getRowCount();
+        int colCount = model.getColumnCount();
+        originalData = new Object[rowCount][colCount];
+        for (int i = 0; i < rowCount; i++) {
+            for (int j = 0; j < colCount; j++) {
+                originalData[i][j] = model.getValueAt(i, j);
+            }
+        }
+    }
+
     public void addItem(String tenKhachHang, String soDienThoai){
         controller.themKhachHangVaoModel(tenKhachHang, soDienThoai);
         refresh();
@@ -82,7 +96,36 @@ public class KhachHangTable extends JTable{
     }
     
     public void editItem(String tenKhachHang, String soDienThoai){
-        int maKhachHang = (Integer) model.getValueAt(getSelectedRow(), 0);
+        int selectedRow = getSelectedRow();
+        int maKhachHang = (Integer) model.getValueAt(selectedRow, 0);
+
+        // Tìm dòng tương ứng trong originalData
+        Object[] originalRow = null;
+        for (Object[] row : originalData) {
+            if (row[0].equals(maKhachHang)) {
+                originalRow = row;
+                break;
+            }
+        }
+
+        // Lấy dữ liệu hiện tại từ database
+        com.senko.warehousemanagement.model.entities.KhachHang khDB = controller.getModel().getAllKhachHang().stream()
+            .filter(kh -> kh.getMaKhachHang() == maKhachHang)
+            .findFirst().orElse(null);
+
+        if (khDB != null && originalRow != null) {
+            String tenKHDB = khDB.getTenKhachHang();
+            String sdtDB = khDB.getSoDienThoai();
+
+            String tenKHOriginal = String.valueOf(originalRow[1]);
+            String sdtOriginal = String.valueOf(originalRow[2]);
+
+            if (!tenKHOriginal.equals(tenKHDB) || !sdtOriginal.equals(sdtDB)) {
+                JOptionPane.showMessageDialog(this, "Dữ liệu khách hàng đã bị thay đổi bởi cửa sổ khác. Vui lòng tải lại bảng!", "Lỗi đồng bộ dữ liệu", JOptionPane.ERROR_MESSAGE);
+                refresh();
+                return;
+            }
+        }
         controller.capNhatKhachHangVaoModel(tenKhachHang, soDienThoai, maKhachHang);
         refresh();
     }

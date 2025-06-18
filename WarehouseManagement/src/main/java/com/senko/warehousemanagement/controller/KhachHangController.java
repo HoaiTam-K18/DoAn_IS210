@@ -9,6 +9,10 @@ import java.util.ArrayList;
 public class KhachHangController {
     private KhachHangDAO model;
     
+    public KhachHangDAO getModel(){
+        return model;
+    }
+    
     public KhachHangController(){
         model = new KhachHangDAO();
     }
